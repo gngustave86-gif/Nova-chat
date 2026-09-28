@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><title>Nova Chat</title>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-storage-compat.js"></script>
+<style>
+:root{--bg:#0b0b10;--s:#17171f;--t:#f4f4f6;--m:#8b8b99;--a:#7c5cff;--b:#ff5c9a;--l:#26262f}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,sans-serif;overflow:hidden}
+button,input{font:inherit}
+.g{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+#auth{display:flex;flex-direction:column;justify-content:center;height:100%;padding:24px;gap:10px}
+#auth h1{margin:0;font-size:28px}#auth p{margin:0 0 10px;color:var(--m)}
+input{background:var(--s);border:1px solid var(--l);color:var(--t);border-radius:12px;padding:13px 14px;font-size:16px;width:100%}
+.btn{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:12px;padding:13px;font-weight:600;font-size:15px;width:100%}
+#err{color:#ff5c5c;font-size:13px;min-height:16px}.sw{color:var(--m);text-align:center;font-size:14px}.sw b{color:var(--a)}
+#app{display:none;flex-direction:column;height:100dvh}
+main{flex:1;position:relative;overflow:hidden}
+.view{position:absolute;inset:0;display:none}.view.on{display:block}
+#feed{overflow-y:scroll;scroll-snap-type:y mandatory}
+.reel{height:100%;scroll-snap-align:start;scroll-snap-stop:always;position:relative;background:#000}
+.reel video{width:100%;height:100%;object-fit:cover}
+.info{position:absolute;left:14px;bottom:18px;right:84px;text-shadow:0 1px 4px #000}
+.info b{display:block;margin-bottom:4px}
+.side{position:absolute;right:10px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.side button{background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:48px;height:48px;font-size:22px}
+.side small{display:block;font-size:12px;margin-top:2px;text-align:center}
+.side .on{color:var(--b)}.fol{background:var(--a)!important;font-size:12px!important;font-weight:700}
+.empty{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--m);padding:30px;line-height:1.5}
+#prof{padding:28px 20px;text-align:center;overflow:auto}
+.av{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700}
+.stats{display:flex;justify-content:space-around;margin:22px 0}.stats b{display:block;font-size:20px}.stats span{color:var(--m);font-size:13px}
+.out{background:var(--s);border:1px solid var(--l);color:var(--t);border-radius:12px;padding:12px;width:100%}
+nav{display:flex;align-items:center;border-top:1px solid var(--l);padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;background:none;border:0;color:var(--m);padding:12px 0;font-size:12px}nav button.on{color:var(--t)}
+nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:linear-gradient(135deg,var(--a),var(--b));color:#fff;font-size:22px;padding:0}
+#up{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;z-index:9}
+#up>div{background:var(--bg);width:100%;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0));border-radius:20px 20px 0 0;display:flex;flex-direction:column;gap:12px}
+#pg{color:var(--m);font-size:13px}
+</style></head><body>
+<div id="auth"><h1>Nova <span class="g">Chat</span></h1><p id="sub">Connecte-toi pour continuer</p>
+<input id="nm" placeholder="Nom d'utilisateur" style="display:none"><input id="em" type="email" placeholder="Adresse e-mail"><input id="pw" type="password" placeholder="Mot de passe (6 caractères min.)">
+<div id="err"></div><button class="btn" id="go">Se connecter</button><div class="sw" id="sw">Pas de compte ? <b>Créer un compte</b></div></div>
+
+<div id="app"><main>
+<div id="feed" class="view on"></div>
+<div id="prof" class="view"><div class="av" id="pa"></div><h2 id="pn" style="margin:0"></h2>
+<div class="stats"><div><b id="s1">0</b><span>Abonnés</span></div><div><b id="s2">0</b><span>Abonnements</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
+<button class="out" id="lo">Se déconnecter</button></div>
+</main>
+<nav><button id="n1" class="on">Accueil</button><button class="plus" id="pl">+</button><button id="n2">Profil</button></nav></div>
+
+<div id="up"><div><b>Nouvelle vidéo</b><input type="file" id="fl" accept="video/*"><input id="cp" placeholder="Légende..." maxlength="150">
+<div id="pg"></div><button class="btn" id="pub">Publier</button><button class="out" id="cx">Annuler</button></div></div>
+
+<script>
+firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
+const auth=firebase.auth(),db=firebase.firestore(),st=firebase.storage(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
+let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set();
+const E={'auth/invalid-email':'E-mail invalide.','auth/email-already-in-use':'Cet e-mail est déjà utilisé.','auth/weak-password':'Mot de passe : 6 caractères min.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/network-request-failed':'Connexion impossible (réseau ou domaine non autorisé).'};
+$('sw').onclick=()=>{signup=!signup;$('nm').style.display=signup?'block':'none';$('go').textContent=signup?'Créer mon compte':'Se connecter';$('sw').innerHTML=signup?'<b>J\'ai déjà un compte</b>':'Pas de compte ? <b>Créer un compte</b>';$('err').textContent=''};
+$('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('nm').value.trim();$('err').textContent='';
+ if(!em||!pw||(signup&&!nm)){$('err').textContent='Remplis tous les champs.';return}
+ try{if(signup){ready=(async()=>{const c=await auth.createUserWithEmailAndPassword(em,pw);await c.user.updateProfile({displayName:nm});await db.collection('users').doc(c.user.uid).set({name:nm,followers:0,following:0,likes:0})})();await ready}
+ else await auth.signInWithEmailAndPassword(em,pw)}catch(e){$('err').textContent=E[e.code]||('Erreur: '+(e.code||e.message))}};
+auth.onAuthStateChanged(async u=>{me=u;if(!u){$('auth').style.display='flex';$('app').style.display='none';return}
+ try{await ready}catch(e){}
+ $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf()});
+$('lo').onclick=()=>auth.signOut();
+function tab(k){$('feed').classList.toggle('on',k==1);$('prof').classList.toggle('on',k==2);$('n1').classList.toggle('on',k==1);$('n2').classList.toggle('on',k==2);if(k==2)loadProf();document.querySelectorAll('video').forEach(v=>v.pause())}
+$('n1').onclick=()=>tab(1);$('n2').onclick=()=>tab(2);
+async function loadProf(){const d=await db.collection('users').doc(me.uid).get(),u=d.data()||{};const n=u.name||me.displayName||'Moi';
+ $('pa').textContent=n[0].toUpperCase();$('pn').textContent='@'+n;$('s1').textContent=u.followers||0;$('s2').textContent=u.following||0;$('s3').textContent=u.likes||0}
+async function loadFeed(){const f=$('feed');
+ const [vs,ls,fs]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(20).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get()]);
+ myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));f.innerHTML='';
+ if(vs.empty){f.innerHTML='<div class="empty">Aucune vidéo pour le moment.<br>Sois le premier : appuie sur +</div>';return}
+ vs.forEach(d=>f.appendChild(reel(d.id,d.data())));
+ const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');if(e.isIntersecting)v.play().catch(()=>{});else v.pause()}),{threshold:.7});
+ f.querySelectorAll('.reel').forEach(r=>io.observe(r))}
+function reel(id,v){const r=document.createElement('div');r.className='reel';
+ r.innerHTML='<video loop playsinline muted></video><div class="info"><b></b><span></span></div><div class="side"></div>';
+ const vd=r.querySelector('video');vd.src=v.url;vd.onclick=()=>{vd.muted=!vd.muted};
+ r.querySelector('b').textContent='@'+(v.name||'anonyme');r.querySelector('span').textContent=v.caption||'';
+ const s=r.querySelector('.side');
+ if(v.uid!==me.uid){const fb=document.createElement('button');fb.className='fol';fb.textContent=myFol.has(v.uid)?'OK':'+';fb.onclick=()=>follow(v.uid,fb);s.appendChild(fb)}
+ const w=document.createElement('div'),lb=document.createElement('button'),c=document.createElement('small');let n=v.likes||0;
+ const paint=()=>{lb.textContent='\u2665';lb.className=myLikes.has(id)?'on':'';c.textContent=n};paint();
+ lb.onclick=async()=>{const on=myLikes.has(id),d=on?-1:1,ref=db.collection('likes').doc(id+'_'+me.uid),b=db.batch();
+  on?myLikes.delete(id):myLikes.add(id);n+=d;paint();
+  on?b.delete(ref):b.set(ref,{vid:id,uid:me.uid});b.update(db.collection('videos').doc(id),{likes:FV.increment(d)});b.update(db.collection('users').doc(v.uid),{likes:FV.increment(d)});
+  try{await b.commit()}catch(e){console.error(e)}};
+ w.append(lb,c);s.appendChild(w);return r}
+async function follow(to,btn){const on=myFol.has(to),d=on?-1:1,ref=db.collection('follows').doc(me.uid+'_'+to),b=db.batch();
+ on?myFol.delete(to):myFol.add(to);btn.textContent=on?'+':'OK';
+ on?b.delete(ref):b.set(ref,{from:me.uid,to:to});b.update(db.collection('users').doc(to),{followers:FV.increment(d)});b.update(db.collection('users').doc(me.uid),{following:FV.increment(d)});
+ try{await b.commit()}catch(e){console.error(e)}}
+$('pl').onclick=()=>{$('up').style.display='flex'};$('cx').onclick=()=>{$('up').style.display='none';$('pg').textContent=''};
+$('pub').onclick=()=>{const f=$('fl').files[0];if(!f){$('pg').textContent='Choisis une vidéo.';return}
+ if(f.size>60*1024*1024){$('pg').textContent='Vidéo trop lourde (60 Mo max).';return}
+ $('pub').disabled=true;const t=st.ref('videos/'+me.uid+'/'+Date.now()).put(f,{contentType:f.type});
+ t.on('state_changed',s=>{$('pg').textContent='Envoi '+Math.round(s.bytesTransferred/s.totalBytes*100)+'%'},e=>{$('pg').textContent='Erreur: '+(e.code||e.message);$('pub').disabled=false},async()=>{
+  const url=await t.snapshot.ref.getDownloadURL();
+  await db.collection('videos').add({uid:me.uid,name:me.displayName||'anonyme',caption:$('cp').value.trim(),url:url,likes:0,createdAt:Date.now()});
+  $('pub').disabled=false;$('fl').value='';$('cp').value='';$('cx').onclick();tab(1);loadFeed()})};
+</script></body></html>
