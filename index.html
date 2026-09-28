@@ -5,7 +5,6 @@
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-app-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-storage-compat.js"></script>
 <style>
 :root{--bg:#0b0b10;--s:#17171f;--t:#f4f4f6;--m:#8b8b99;--a:#7c5cff;--b:#ff5c9a;--l:#26262f}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,sans-serif;overflow:hidden}
@@ -57,7 +56,7 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
-const auth=firebase.auth(),db=firebase.firestore(),st=firebase.storage(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
+const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
 let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set();
 const E={'auth/invalid-email':'E-mail invalide.','auth/email-already-in-use':'Cet e-mail est déjà utilisé.','auth/weak-password':'Mot de passe : 6 caractères min.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/network-request-failed':'Connexion impossible (réseau ou domaine non autorisé).'};
 $('sw').onclick=()=>{signup=!signup;$('nm').style.display=signup?'block':'none';$('go').textContent=signup?'Créer mon compte':'Se connecter';$('sw').innerHTML=signup?'<b>J\'ai déjà un compte</b>':'Pas de compte ? <b>Créer un compte</b>';$('err').textContent=''};
@@ -98,11 +97,20 @@ async function follow(to,btn){const on=myFol.has(to),d=on?-1:1,ref=db.collection
  on?b.delete(ref):b.set(ref,{from:me.uid,to:to});b.update(db.collection('users').doc(to),{followers:FV.increment(d)});b.update(db.collection('users').doc(me.uid),{following:FV.increment(d)});
  try{await b.commit()}catch(e){console.error(e)}}
 $('pl').onclick=()=>{$('up').style.display='flex'};$('cx').onclick=()=>{$('up').style.display='none';$('pg').textContent=''};
+const CLOUD_NAME='qj5r8wt2',UPLOAD_PRESET='nova_chat_videos';
 $('pub').onclick=()=>{const f=$('fl').files[0];if(!f){$('pg').textContent='Choisis une vidéo.';return}
  if(f.size>60*1024*1024){$('pg').textContent='Vidéo trop lourde (60 Mo max).';return}
- $('pub').disabled=true;const t=st.ref('videos/'+me.uid+'/'+Date.now()).put(f,{contentType:f.type});
- t.on('state_changed',s=>{$('pg').textContent='Envoi '+Math.round(s.bytesTransferred/s.totalBytes*100)+'%'},e=>{$('pg').textContent='Erreur: '+(e.code||e.message);$('pub').disabled=false},async()=>{
-  const url=await t.snapshot.ref.getDownloadURL();
-  await db.collection('videos').add({uid:me.uid,name:me.displayName||'anonyme',caption:$('cp').value.trim(),url:url,likes:0,createdAt:Date.now()});
-  $('pub').disabled=false;$('fl').value='';$('cp').value='';$('cx').onclick();tab(1);loadFeed()})};
+ $('pub').disabled=true;$('pg').textContent='Envoi 0%';
+ const fd=new FormData();fd.append('file',f);fd.append('upload_preset',UPLOAD_PRESET);
+ const xhr=new XMLHttpRequest();
+ xhr.upload.onprogress=e=>{if(e.lengthComputable)$('pg').textContent='Envoi '+Math.round(e.loaded/e.total*100)+'%'};
+ xhr.onerror=()=>{$('pg').textContent='Erreur réseau';$('pub').disabled=false};
+ xhr.onload=async()=>{
+  if(xhr.status<200||xhr.status>=300){$('pg').textContent='Erreur: '+xhr.status;$('pub').disabled=false;return}
+  let data;try{data=JSON.parse(xhr.responseText)}catch(e){$('pg').textContent='Erreur réponse';$('pub').disabled=false;return}
+  const url=data.secure_url;
+  try{await db.collection('videos').add({uid:me.uid,name:me.displayName||'anonyme',caption:$('cp').value.trim(),url:url,likes:0,createdAt:Date.now()})}catch(e){$('pg').textContent='Erreur: '+e.message;$('pub').disabled=false;return}
+  $('pub').disabled=false;$('fl').value='';$('cp').value='';$('cx').onclick();tab(1);loadFeed()};
+ xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/video/upload');
+ xhr.send(fd)};
 </script></body></html>
