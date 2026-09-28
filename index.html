@@ -38,6 +38,23 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 #up{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;z-index:9}
 #up>div{background:var(--bg);width:100%;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0));border-radius:20px 20px 0 0;display:flex;flex-direction:column;gap:12px}
 #pg{color:var(--m);font-size:13px}
+#chats{padding:14px;overflow-y:auto}
+.crow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--l)}
+.av2{flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700}
+.crow b{display:block;font-size:15px}.crow .lm{color:var(--m);font-size:12px;margin-top:2px}
+#sres{margin-bottom:6px}
+#thread{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
+#thread.on{display:flex}
+.thead{display:flex;align-items:center;gap:12px;padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0));border-bottom:1px solid var(--l)}
+.thead button{background:none;border:0;color:var(--t);font-size:22px;padding:0}
+.thead b{font-size:16px}
+#tmsgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.bub{max-width:75%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.35;word-break:break-word}
+.bub.me{align-self:flex-end;background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border-bottom-right-radius:4px}
+.bub.you{align-self:flex-start;background:var(--s);border-bottom-left-radius:4px}
+.tinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0))}
+.tinput input{flex:1}
+.tinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:42px;height:42px;font-size:16px;flex:0 0 42px}
 </style></head><body>
 <div id="auth"><h1>Nova <span class="g">Chat</span></h1><p id="sub">Connecte-toi pour continuer</p>
 <input id="nm" placeholder="Nom d'utilisateur" style="display:none"><input id="em" type="email" placeholder="Adresse e-mail"><input id="pw" type="password" placeholder="Mot de passe (6 caractères min.)">
@@ -45,14 +62,19 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 
 <div id="app"><main>
 <div id="feed" class="view on"></div>
+<div id="chats" class="view"><input id="sq" placeholder="Rechercher quelqu'un..."><div id="sres"></div><div id="clist"></div></div>
 <div id="prof" class="view"><div class="av" id="pa"></div><h2 id="pn" style="margin:0"></h2>
 <div class="stats"><div><b id="s1">0</b><span>Abonnés</span></div><div><b id="s2">0</b><span>Abonnements</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
 <button class="out" id="lo">Se déconnecter</button></div>
 </main>
-<nav><button id="n1" class="on">Accueil</button><button class="plus" id="pl">+</button><button id="n2">Profil</button></nav></div>
+<nav><button id="n1" class="on">Accueil</button><button id="n3">Chat</button><button class="plus" id="pl">+</button><button id="n2">Profil</button></nav></div>
 
 <div id="up"><div><b>Nouvelle vidéo</b><input type="file" id="fl" accept="video/*"><input id="cp" placeholder="Légende..." maxlength="150">
 <div id="pg"></div><button class="btn" id="pub">Publier</button><button class="out" id="cx">Annuler</button></div></div>
+
+<div id="thread"><div class="thead"><button id="tback">←</button><b id="tname"></b></div>
+<div id="tmsgs"></div>
+<div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tsend">➤</button></div></div>
 
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
@@ -62,14 +84,14 @@ const E={'auth/invalid-email':'E-mail invalide.','auth/email-already-in-use':'Ce
 $('sw').onclick=()=>{signup=!signup;$('nm').style.display=signup?'block':'none';$('go').textContent=signup?'Créer mon compte':'Se connecter';$('sw').innerHTML=signup?'<b>J\'ai déjà un compte</b>':'Pas de compte ? <b>Créer un compte</b>';$('err').textContent=''};
 $('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('nm').value.trim();$('err').textContent='';
  if(!em||!pw||(signup&&!nm)){$('err').textContent='Remplis tous les champs.';return}
- try{if(signup){ready=(async()=>{const c=await auth.createUserWithEmailAndPassword(em,pw);await c.user.updateProfile({displayName:nm});await db.collection('users').doc(c.user.uid).set({name:nm,followers:0,following:0,likes:0})})();await ready}
+ try{if(signup){ready=(async()=>{const c=await auth.createUserWithEmailAndPassword(em,pw);await c.user.updateProfile({displayName:nm});await db.collection('users').doc(c.user.uid).set({name:nm,nameLower:nm.toLowerCase(),followers:0,following:0,likes:0})})();await ready}
  else await auth.signInWithEmailAndPassword(em,pw)}catch(e){$('err').textContent=E[e.code]||('Erreur: '+(e.code||e.message))}};
 auth.onAuthStateChanged(async u=>{me=u;if(!u){$('auth').style.display='flex';$('app').style.display='none';return}
  try{await ready}catch(e){}
  $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf()});
 $('lo').onclick=()=>auth.signOut();
-function tab(k){$('feed').classList.toggle('on',k==1);$('prof').classList.toggle('on',k==2);$('n1').classList.toggle('on',k==1);$('n2').classList.toggle('on',k==2);if(k==2)loadProf();document.querySelectorAll('video').forEach(v=>v.pause())}
-$('n1').onclick=()=>tab(1);$('n2').onclick=()=>tab(2);
+function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);if(k==2)loadProf();if(k==3)loadChats();document.querySelectorAll('video').forEach(v=>v.pause())}
+$('n1').onclick=()=>tab(1);$('n3').onclick=()=>tab(3);$('n2').onclick=()=>tab(2);
 async function loadProf(){const d=await db.collection('users').doc(me.uid).get(),u=d.data()||{};const n=u.name||me.displayName||'Moi';
  $('pa').textContent=n[0].toUpperCase();$('pn').textContent='@'+n;$('s1').textContent=u.followers||0;$('s2').textContent=u.following||0;$('s3').textContent=u.likes||0}
 async function loadFeed(){const f=$('feed');
@@ -96,6 +118,50 @@ async function follow(to,btn){const on=myFol.has(to),d=on?-1:1,ref=db.collection
  on?myFol.delete(to):myFol.add(to);btn.textContent=on?'+':'OK';
  on?b.delete(ref):b.set(ref,{from:me.uid,to:to});b.update(db.collection('users').doc(to),{followers:FV.increment(d)});b.update(db.collection('users').doc(me.uid),{following:FV.increment(d)});
  try{await b.commit()}catch(e){console.error(e)}}
+let sqTimer;
+$('sq').oninput=()=>{clearTimeout(sqTimer);sqTimer=setTimeout(doSearch,300)};
+async function doSearch(){const q=$('sq').value.trim().toLowerCase(),box=$('sres');if(!q){box.innerHTML='';return}
+ try{const r=await db.collection('users').where('nameLower','>=',q).where('nameLower','<=',q+'\uf8ff').limit(15).get();
+  box.innerHTML='';
+  r.forEach(d=>{if(d.id===me.uid)return;const u=d.data(),row=document.createElement('div');row.className='crow';
+   row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b></div>';
+   row.querySelector('.av2').textContent=(u.name||'?')[0].toUpperCase();
+   row.querySelector('b').textContent='@'+(u.name||'anonyme');
+   row.onclick=()=>openChat(d.id,u.name||'anonyme');
+   box.appendChild(row)})
+ }catch(e){box.innerHTML='<div class="empty">Erreur de recherche.</div>'}}
+async function loadChats(){const box=$('clist');box.innerHTML='Chargement…';
+ try{const r=await db.collection('chats').where('participants','array-contains',me.uid).get();
+  let docs=r.docs.map(d=>({id:d.id,...d.data()}));docs.sort((a,b)=>(b.lastAt||0)-(a.lastAt||0));
+  box.innerHTML='';
+  if(!docs.length){box.innerHTML='<div class="empty">Aucune conversation.<br>Cherche quelqu\'un ci-dessus pour commencer.</div>';return}
+  docs.forEach(c=>{const otherUid=c.participants.find(p=>p!==me.uid),otherName=(c.names&&c.names[otherUid])||'anonyme',row=document.createElement('div');row.className='crow';
+   row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b><div class="lm"></div></div>';
+   row.querySelector('.av2').textContent=otherName[0].toUpperCase();
+   row.querySelector('b').textContent='@'+otherName;
+   row.querySelector('.lm').textContent=c.lastMsg||'';
+   row.onclick=()=>openChat(otherUid,otherName);
+   box.appendChild(row)})
+ }catch(e){box.innerHTML='<div class="empty">Erreur de chargement.</div>'}}
+let curChat=null,curUnsub=null;
+async function openChat(otherUid,otherName){const chatId=[me.uid,otherUid].sort().join('_');curChat=chatId;
+ const ref=db.collection('chats').doc(chatId);
+ try{const snap=await ref.get();
+  if(!snap.exists){const myName=me.displayName||'Moi',names={};names[me.uid]=myName;names[otherUid]=otherName;
+   await ref.set({participants:[me.uid,otherUid].sort(),names:names,lastMsg:'',lastAt:Date.now()})}
+ }catch(e){}
+ $('tname').textContent='@'+otherName;$('thread').classList.add('on');$('tmsgs').innerHTML='';
+ if(curUnsub)curUnsub();
+ curUnsub=ref.collection('messages').orderBy('createdAt').onSnapshot(qs=>{
+  const box=$('tmsgs');box.innerHTML='';
+  qs.forEach(d=>{const m=d.data(),b=document.createElement('div');b.className='bub '+(m.from===me.uid?'me':'you');b.textContent=m.text;box.appendChild(b)});
+  box.scrollTop=box.scrollHeight
+ },e=>{$('tmsgs').innerHTML='<div class="empty">Erreur de chargement.</div>'})}
+$('tback').onclick=()=>{$('thread').classList.remove('on');if(curUnsub){curUnsub();curUnsub=null}curChat=null;loadChats()};
+async function sendMsg(){const txt=$('tin').value.trim();if(!txt||!curChat)return;$('tin').value='';
+ const ref=db.collection('chats').doc(curChat);
+ try{await ref.collection('messages').add({from:me.uid,text:txt,createdAt:Date.now()});await ref.update({lastMsg:txt,lastAt:Date.now()})}catch(e){console.error(e)}}
+$('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
 $('pl').onclick=()=>{$('up').style.display='flex'};$('cx').onclick=()=>{$('up').style.display='none';$('pg').textContent=''};
 const CLOUD_NAME='qj5r8wt2',UPLOAD_PRESET='nova_chat_videos';
 $('pub').onclick=()=>{const f=$('fl').files[0];if(!f){$('pg').textContent='Choisis une vidéo.';return}
