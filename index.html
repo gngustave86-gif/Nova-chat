@@ -82,6 +82,7 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 .vtile{aspect-ratio:9/16;background:#000;position:relative;overflow:hidden;border-radius:4px}
 .vtile video{width:100%;height:100%;object-fit:cover}
 .info b{cursor:pointer}
+.badge{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:#3897f0;color:#fff;font-size:9px;margin-left:4px;vertical-align:middle;flex-shrink:0}
 </style></head><body>
 <div id="auth"><h1>Nova <span class="g">Chat</span></h1><p id="sub">Connecte-toi pour continuer</p>
 <input id="nm" placeholder="Nom d'utilisateur" style="display:none"><input id="em" type="email" placeholder="Adresse e-mail"><input id="pw" type="password" placeholder="Mot de passe (6 caractères min.)">
@@ -118,6 +119,9 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
 const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
 let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set();
+const ADMIN_EMAIL='gngustave@gmail.com';
+function setNameWithBadge(el,atName,premiumUntil){el.textContent='';el.appendChild(document.createTextNode('@'+atName));
+ if(premiumUntil&&premiumUntil>Date.now()){const b=document.createElement('span');b.className='badge';b.textContent='\u2713';el.appendChild(b)}}
 const E={'auth/invalid-email':'E-mail invalide.','auth/email-already-in-use':'Cet e-mail est déjà utilisé.','auth/weak-password':'Mot de passe : 6 caractères min.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/network-request-failed':'Connexion impossible (réseau ou domaine non autorisé).'};
 $('sw').onclick=()=>{signup=!signup;$('nm').style.display=signup?'block':'none';$('go').textContent=signup?'Créer mon compte':'Se connecter';$('sw').innerHTML=signup?'<b>J\'ai déjà un compte</b>':'Pas de compte ? <b>Créer un compte</b>';$('err').textContent=''};
 $('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('nm').value.trim();$('err').textContent='';
@@ -132,15 +136,17 @@ function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggl
 $('n1').onclick=()=>tab(1);$('n3').onclick=()=>tab(3);$('n2').onclick=()=>tab(2);
 $('gosearch').onclick=()=>tab(3);
 async function loadProf(){const d=await db.collection('users').doc(me.uid).get(),u=d.data()||{};const n=u.name||me.displayName||'Moi';
- $('pa').textContent=n[0].toUpperCase();$('pn').textContent='@'+n;$('s1').textContent=u.followers||0;$('s2').textContent=u.following||0;$('s3').textContent=u.likes||0}
+ $('pa').textContent=n[0].toUpperCase();setNameWithBadge($('pn'),n,u.premiumUntil);$('s1').textContent=u.followers||0;$('s2').textContent=u.following||0;$('s3').textContent=u.likes||0}
 async function loadFeed(){const f=$('feed');
  const [vs,ls,fs,sv]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(20).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get()]);
  myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));f.innerHTML='';
  if(vs.empty){f.innerHTML='<div class="empty">Aucune vidéo pour le moment.<br>Sois le premier : appuie sur +</div>';return}
- vs.forEach(d=>f.appendChild(reel(d.id,d.data())));
+ const uids=[...new Set(vs.docs.map(d=>d.data().uid))],pm={};
+ await Promise.all(uids.map(async u=>{try{const d2=await db.collection('users').doc(u).get();pm[u]=(d2.data()&&d2.data().premiumUntil)||null}catch(e){}}));
+ vs.forEach(d=>f.appendChild(reel(d.id,d.data(),pm)));
  const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');if(e.isIntersecting)v.play().catch(()=>{});else v.pause()}),{threshold:.7});
  f.querySelectorAll('.reel').forEach(r=>io.observe(r))}
-function reel(id,v){const r=document.createElement('div');r.className='reel';
+function reel(id,v,pm){const r=document.createElement('div');r.className='reel';pm=pm||{};
  r.innerHTML=`<video loop playsinline muted></video>
 <div class="info"><b></b><span></span><div class="snd">🎵 <span>son original</span></div></div>
 <div class="side">
@@ -152,7 +158,7 @@ ${v.uid!==me.uid?'<button class="fol"></button>':''}
 <div class="music">🎵</div>
 </div>`;
  const vd=r.querySelector('video');vd.src=v.url;vd.onclick=()=>{vd.muted=!vd.muted};
- const nmB=r.querySelector('.info b');nmB.textContent='@'+(v.name||'anonyme');nmB.onclick=()=>openProfile(v.uid,v.name||'anonyme');
+ const nmB=r.querySelector('.info b');setNameWithBadge(nmB,v.name||'anonyme',pm[v.uid]);nmB.onclick=()=>openProfile(v.uid,v.name||'anonyme');
  r.querySelector('.info > span').textContent=v.caption||'';
  const fb=r.querySelector('.fol');if(fb){fb.textContent=myFol.has(v.uid)?'OK':'+';fb.onclick=async()=>{fb.textContent=(await toggleFollow(v.uid))?'OK':'+'}}
  const lb=r.querySelector('.lk'),lc=lb.nextElementSibling;let n=v.likes||0;
@@ -176,13 +182,21 @@ async function toggleFollow(to){const on=myFol.has(to),d=on?-1:1,ref=db.collecti
  try{await b.commit()}catch(e){console.error(e)}
  return !on}
 async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
- $('un').textContent='@'+name;$('ua').textContent=(name[0]||'?').toUpperCase();$('ugrid').innerHTML='';$('uact').style.display='flex';
+ $('ua').textContent=(name[0]||'?').toUpperCase();$('ugrid').innerHTML='';$('uact').style.display='flex';
  $('uprof').classList.add('on');
  try{const [ud,vs]=await Promise.all([db.collection('users').doc(uid).get(),db.collection('videos').where('uid','==',uid).limit(60).get()]);
-  const u=ud.data()||{};$('uf1').textContent=u.followers||0;$('uf2').textContent=u.following||0;$('uf3').textContent=u.likes||0;
+  const u=ud.data()||{};setNameWithBadge($('un'),name,u.premiumUntil);$('uf1').textContent=u.followers||0;$('uf2').textContent=u.following||0;$('uf3').textContent=u.likes||0;
   $('ufol').textContent=myFol.has(uid)?'Abonné(e)':'Suivre';
   $('ufol').onclick=async()=>{const on=await toggleFollow(uid);$('ufol').textContent=on?'Abonné(e)':'Suivre';$('uf1').textContent=Math.max(0,(+$('uf1').textContent)+(on?1:-1))};
   $('umsg').onclick=()=>{$('uprof').classList.remove('on');openChat(uid,name)};
+  let adminBox=$('adminBox');if(!adminBox){adminBox=document.createElement('div');adminBox.id='adminBox';adminBox.style.margin='0 0 14px';$('uact').insertAdjacentElement('afterend',adminBox)}
+  adminBox.innerHTML='';
+  if(me.email===ADMIN_EMAIL){const isPrem=u.premiumUntil&&u.premiumUntil>Date.now();
+   const ab=document.createElement('button');ab.className='out';ab.style.width='100%';
+   ab.textContent=isPrem?'Retirer le badge Premium':'🎖️ Activer badge Premium (1 mois)';
+   ab.onclick=async()=>{const val=isPrem?null:Date.now()+30*24*60*60*1000;
+    try{await db.collection('users').doc(uid).update({premiumUntil:val});toast(isPrem?'Badge retiré':'Badge activé pour 1 mois');openProfile(uid,name)}catch(e){toast('Erreur')}};
+   adminBox.appendChild(ab)}
   let vids=vs.docs.map(d=>d.data());vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   vids.forEach(v=>{const t=document.createElement('div');t.className='vtile';t.innerHTML='<video muted playsinline preload="metadata"></video>';
    const vd=t.querySelector('video');vd.src=v.url;t.onclick=()=>{vd.paused?vd.play():vd.pause()};$('ugrid').appendChild(t)});
@@ -222,7 +236,7 @@ async function doSearch(){const q=$('sq').value.trim().toLowerCase(),box=$('sres
    const row=document.createElement('div');row.className='crow';
    row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b></div>';
    row.querySelector('.av2').textContent=(u.name||'?')[0].toUpperCase();
-   row.querySelector('b').textContent='@'+(u.name||'anonyme');
+   setNameWithBadge(row.querySelector('b'),u.name||'anonyme',u.premiumUntil);
    row.onclick=()=>openChat(d.id,u.name||'anonyme');
    box.appendChild(row)})
  }catch(e){box.innerHTML='<div class="empty">Erreur de recherche.</div>'}}
