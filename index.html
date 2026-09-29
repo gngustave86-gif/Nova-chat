@@ -23,10 +23,27 @@ main{flex:1;position:relative;overflow:hidden}
 .reel video{width:100%;height:100%;object-fit:cover}
 .info{position:absolute;left:14px;bottom:18px;right:84px;text-shadow:0 1px 4px #000}
 .info b{display:block;margin-bottom:4px}
-.side{position:absolute;right:10px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:18px}
-.side button{background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:48px;height:48px;font-size:22px}
-.side small{display:block;font-size:12px;margin-top:2px;text-align:center}
+.snd{font-size:12px;margin-top:6px;display:flex;align-items:center;gap:5px;opacity:.9}
+.side{position:absolute;right:10px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.side button{background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:46px;height:46px;font-size:21px}
+.side small{display:block;font-size:12px;margin-top:2px;text-align:center;color:#fff;text-shadow:0 1px 3px #000}
 .side .on{color:var(--b)}.fol{background:var(--a)!important;font-size:12px!important;font-weight:700}
+.side .music{width:32px;height:32px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid rgba(255,255,255,.5);animation:spin 4s linear infinite;margin-top:2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;pointer-events:none;z-index:5}
+#ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px}
+#cmts{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
+#cmts.on{display:flex}
+#cmts>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
+.cmthead{padding:16px;border-bottom:1px solid var(--l);text-align:center;font-weight:700;position:relative}
+.cmthead button{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--m);font-size:20px}
+#clistc{flex:1;overflow-y:auto;padding:14px;min-height:120px}
+.crow2{margin-bottom:14px}
+.crow2 b{display:block;font-size:12px;color:var(--m);margin-bottom:2px}
+.crow2 span{font-size:14px}
+.cinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0))}
+.cinput input{flex:1}
+.cinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:40px;height:40px;flex:0 0 40px}
 .empty{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--m);padding:30px;line-height:1.5}
 #prof{padding:28px 20px;text-align:center;overflow:auto}
 .av{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700}
@@ -39,6 +56,9 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 #up>div{background:var(--bg);width:100%;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0));border-radius:20px 20px 0 0;display:flex;flex-direction:column;gap:12px}
 #pg{color:var(--m);font-size:13px}
 #chats{padding:14px;overflow-y:auto}
+.sbox{position:relative;margin-bottom:10px}
+.sbox .sicon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--m);font-size:15px;pointer-events:none}
+#sq{padding-left:38px}
 .crow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--l)}
 .av2{flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700}
 .crow b{display:block;font-size:15px}.crow .lm{color:var(--m);font-size:12px;margin-top:2px}
@@ -55,6 +75,13 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 .tinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0))}
 .tinput input{flex:1}
 .tinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:42px;height:42px;font-size:16px;flex:0 0 42px}
+#uprof{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
+#uprof.on{display:flex}
+#ubody{flex:1;overflow:auto;padding:24px 20px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:14px}
+.vtile{aspect-ratio:9/16;background:#000;position:relative;overflow:hidden;border-radius:4px}
+.vtile video{width:100%;height:100%;object-fit:cover}
+.info b{cursor:pointer}
 </style></head><body>
 <div id="auth"><h1>Nova <span class="g">Chat</span></h1><p id="sub">Connecte-toi pour continuer</p>
 <input id="nm" placeholder="Nom d'utilisateur" style="display:none"><input id="em" type="email" placeholder="Adresse e-mail"><input id="pw" type="password" placeholder="Mot de passe (6 caractères min.)">
@@ -62,7 +89,8 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 
 <div id="app"><main>
 <div id="feed" class="view on"></div>
-<div id="chats" class="view"><input id="sq" placeholder="Rechercher quelqu'un..."><div id="sres"></div><div id="clist"></div></div>
+<div id="ftop"><button id="gosearch">🔍</button></div>
+<div id="chats" class="view"><div class="sbox"><span class="sicon">🔍</span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres"></div><div id="clist"></div></div>
 <div id="prof" class="view"><div class="av" id="pa"></div><h2 id="pn" style="margin:0"></h2>
 <div class="stats"><div><b id="s1">0</b><span>Abonnés</span></div><div><b id="s2">0</b><span>Abonnements</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
 <button class="out" id="lo">Se déconnecter</button></div>
@@ -76,10 +104,20 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 <div id="tmsgs"></div>
 <div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tsend">➤</button></div></div>
 
+<div id="cmts"><div><div class="cmthead">Commentaires<button id="cclose">✕</button></div>
+<div id="clistc"></div>
+<div class="cinput"><input id="cin" placeholder="Ajouter un commentaire..."><button id="csend">➤</button></div></div></div>
+
+<div id="uprof"><div class="thead"><button id="uback">←</button><b>Profil</b></div>
+<div id="ubody"><div class="av" id="ua"></div><h2 id="un" style="margin:0"></h2>
+<div class="stats"><div><b id="uf1">0</b><span>Abonnés</span></div><div><b id="uf2">0</b><span>Abonnements</span></div><div><b id="uf3">0</b><span>J'aime</span></div></div>
+<div id="uact" style="display:flex;gap:10px;margin:14px 0"><button class="btn" id="ufol" style="flex:1">Suivre</button><button class="out" id="umsg" style="flex:1">Message</button></div>
+<div id="ugrid" class="grid"></div></div></div>
+
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
 const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
-let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set();
+let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set();
 const E={'auth/invalid-email':'E-mail invalide.','auth/email-already-in-use':'Cet e-mail est déjà utilisé.','auth/weak-password':'Mot de passe : 6 caractères min.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/network-request-failed':'Connexion impossible (réseau ou domaine non autorisé).'};
 $('sw').onclick=()=>{signup=!signup;$('nm').style.display=signup?'block':'none';$('go').textContent=signup?'Créer mon compte':'Se connecter';$('sw').innerHTML=signup?'<b>J\'ai déjà un compte</b>':'Pas de compte ? <b>Créer un compte</b>';$('err').textContent=''};
 $('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('nm').value.trim();$('err').textContent='';
@@ -90,40 +128,98 @@ auth.onAuthStateChanged(async u=>{me=u;if(!u){$('auth').style.display='flex';$('
  try{await ready}catch(e){}
  $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf()});
 $('lo').onclick=()=>auth.signOut();
-function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);if(k==2)loadProf();if(k==3)loadChats();document.querySelectorAll('video').forEach(v=>v.pause())}
+function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);$('ftop').style.display=k==1?'flex':'none';if(k==2)loadProf();if(k==3)loadChats();document.querySelectorAll('video').forEach(v=>v.pause())}
 $('n1').onclick=()=>tab(1);$('n3').onclick=()=>tab(3);$('n2').onclick=()=>tab(2);
+$('gosearch').onclick=()=>tab(3);
 async function loadProf(){const d=await db.collection('users').doc(me.uid).get(),u=d.data()||{};const n=u.name||me.displayName||'Moi';
  $('pa').textContent=n[0].toUpperCase();$('pn').textContent='@'+n;$('s1').textContent=u.followers||0;$('s2').textContent=u.following||0;$('s3').textContent=u.likes||0}
 async function loadFeed(){const f=$('feed');
- const [vs,ls,fs]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(20).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get()]);
- myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));f.innerHTML='';
+ const [vs,ls,fs,sv]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(20).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get()]);
+ myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));f.innerHTML='';
  if(vs.empty){f.innerHTML='<div class="empty">Aucune vidéo pour le moment.<br>Sois le premier : appuie sur +</div>';return}
  vs.forEach(d=>f.appendChild(reel(d.id,d.data())));
  const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');if(e.isIntersecting)v.play().catch(()=>{});else v.pause()}),{threshold:.7});
  f.querySelectorAll('.reel').forEach(r=>io.observe(r))}
 function reel(id,v){const r=document.createElement('div');r.className='reel';
- r.innerHTML='<video loop playsinline muted></video><div class="info"><b></b><span></span></div><div class="side"></div>';
+ r.innerHTML=`<video loop playsinline muted></video>
+<div class="info"><b></b><span></span><div class="snd">🎵 <span>son original</span></div></div>
+<div class="side">
+${v.uid!==me.uid?'<button class="fol"></button>':''}
+<div><button class="lk">\u2665</button><small></small></div>
+<div><button class="cm">💬</button><small></small></div>
+<div><button class="sv">🔖</button></div>
+<div><button class="sh">↗️</button></div>
+<div class="music">🎵</div>
+</div>`;
  const vd=r.querySelector('video');vd.src=v.url;vd.onclick=()=>{vd.muted=!vd.muted};
- r.querySelector('b').textContent='@'+(v.name||'anonyme');r.querySelector('span').textContent=v.caption||'';
- const s=r.querySelector('.side');
- if(v.uid!==me.uid){const fb=document.createElement('button');fb.className='fol';fb.textContent=myFol.has(v.uid)?'OK':'+';fb.onclick=()=>follow(v.uid,fb);s.appendChild(fb)}
- const w=document.createElement('div'),lb=document.createElement('button'),c=document.createElement('small');let n=v.likes||0;
- const paint=()=>{lb.textContent='\u2665';lb.className=myLikes.has(id)?'on':'';c.textContent=n};paint();
+ const nmB=r.querySelector('.info b');nmB.textContent='@'+(v.name||'anonyme');nmB.onclick=()=>openProfile(v.uid,v.name||'anonyme');
+ r.querySelector('.info > span').textContent=v.caption||'';
+ const fb=r.querySelector('.fol');if(fb){fb.textContent=myFol.has(v.uid)?'OK':'+';fb.onclick=async()=>{fb.textContent=(await toggleFollow(v.uid))?'OK':'+'}}
+ const lb=r.querySelector('.lk'),lc=lb.nextElementSibling;let n=v.likes||0;
+ const paint=()=>{lb.className=myLikes.has(id)?'lk on':'lk';lc.textContent=n};paint();
  lb.onclick=async()=>{const on=myLikes.has(id),d=on?-1:1,ref=db.collection('likes').doc(id+'_'+me.uid),b=db.batch();
   on?myLikes.delete(id):myLikes.add(id);n+=d;paint();
   on?b.delete(ref):b.set(ref,{vid:id,uid:me.uid});b.update(db.collection('videos').doc(id),{likes:FV.increment(d)});b.update(db.collection('users').doc(v.uid),{likes:FV.increment(d)});
   try{await b.commit()}catch(e){console.error(e)}};
- w.append(lb,c);s.appendChild(w);return r}
-async function follow(to,btn){const on=myFol.has(to),d=on?-1:1,ref=db.collection('follows').doc(me.uid+'_'+to),b=db.batch();
- on?myFol.delete(to):myFol.add(to);btn.textContent=on?'+':'OK';
+ const cm=r.querySelector('.cm'),cc=cm.nextElementSibling;cc.textContent=v.commentsCount||0;
+ cm.onclick=()=>openComments(id,cc);
+ const sv=r.querySelector('.sv');sv.className=mySaves.has(id)?'sv on':'sv';
+ sv.onclick=async()=>{const on=mySaves.has(id),ref=db.collection('saves').doc(id+'_'+me.uid);
+  on?mySaves.delete(id):mySaves.add(id);sv.className=mySaves.has(id)?'sv on':'sv';
+  try{on?await ref.delete():await ref.set({vid:id,uid:me.uid,createdAt:Date.now()})}catch(e){console.error(e)}
+  toast(on?'Retiré des favoris':'Ajouté aux favoris')};
+ r.querySelector('.sh').onclick=()=>shareVideo(v.url,v.caption);
+ return r}
+async function toggleFollow(to){const on=myFol.has(to),d=on?-1:1,ref=db.collection('follows').doc(me.uid+'_'+to),b=db.batch();
+ on?myFol.delete(to):myFol.add(to);
  on?b.delete(ref):b.set(ref,{from:me.uid,to:to});b.update(db.collection('users').doc(to),{followers:FV.increment(d)});b.update(db.collection('users').doc(me.uid),{following:FV.increment(d)});
- try{await b.commit()}catch(e){console.error(e)}}
+ try{await b.commit()}catch(e){console.error(e)}
+ return !on}
+async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
+ $('un').textContent='@'+name;$('ua').textContent=(name[0]||'?').toUpperCase();$('ugrid').innerHTML='';$('uact').style.display='flex';
+ $('uprof').classList.add('on');
+ try{const [ud,vs]=await Promise.all([db.collection('users').doc(uid).get(),db.collection('videos').where('uid','==',uid).limit(60).get()]);
+  const u=ud.data()||{};$('uf1').textContent=u.followers||0;$('uf2').textContent=u.following||0;$('uf3').textContent=u.likes||0;
+  $('ufol').textContent=myFol.has(uid)?'Abonné(e)':'Suivre';
+  $('ufol').onclick=async()=>{const on=await toggleFollow(uid);$('ufol').textContent=on?'Abonné(e)':'Suivre';$('uf1').textContent=Math.max(0,(+$('uf1').textContent)+(on?1:-1))};
+  $('umsg').onclick=()=>{$('uprof').classList.remove('on');openChat(uid,name)};
+  let vids=vs.docs.map(d=>d.data());vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  vids.forEach(v=>{const t=document.createElement('div');t.className='vtile';t.innerHTML='<video muted playsinline preload="metadata"></video>';
+   const vd=t.querySelector('video');vd.src=v.url;t.onclick=()=>{vd.paused?vd.play():vd.pause()};$('ugrid').appendChild(t)});
+  if(!vids.length)$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>'
+ }catch(e){}}
+$('uback').onclick=()=>$('uprof').classList.remove('on');
+function toast(msg){let t=document.getElementById('toastEl');if(!t){t=document.createElement('div');t.id='toastEl';t.style.cssText='position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:30;transition:opacity .3s';document.body.appendChild(t)}
+ t.textContent=msg;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',1800)}
+async function shareVideo(url,caption){
+ try{if(navigator.share){await navigator.share({title:'Nova Chat',text:caption||'Regarde cette vidéo sur Nova Chat',url:url})}
+  else{await navigator.clipboard.writeText(url);toast('Lien copié !')}
+ }catch(e){}}
+let curVid=null,curCmCountEl=null;
+async function openComments(vid,countEl){curVid=vid;curCmCountEl=countEl;
+ $('cmts').classList.add('on');$('clistc').innerHTML='Chargement…';
+ try{const r=await db.collection('videos').doc(vid).collection('comments').orderBy('createdAt').limit(100).get();
+  $('clistc').innerHTML='';
+  if(r.empty){$('clistc').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucun commentaire.<br>Sois le premier à commenter.</div>'}
+  r.forEach(d=>{const c=d.data(),row=document.createElement('div');row.className='crow2';
+   row.innerHTML='<b></b><span></span>';row.querySelector('b').textContent='@'+(c.name||'anonyme');row.querySelector('span').textContent=c.text;
+   $('clistc').appendChild(row)});
+  $('clistc').scrollTop=$('clistc').scrollHeight
+ }catch(e){$('clistc').innerHTML='<div class="empty" style="height:auto;padding:20px">Erreur de chargement.</div>'}}
+$('cclose').onclick=()=>$('cmts').classList.remove('on');
+async function sendComment(){const txt=$('cin').value.trim();if(!txt||!curVid)return;$('cin').value='';
+ try{await db.collection('videos').doc(curVid).collection('comments').add({uid:me.uid,name:me.displayName||'anonyme',text:txt,createdAt:Date.now()});
+  await db.collection('videos').doc(curVid).update({commentsCount:FV.increment(1)});
+  if(curCmCountEl)curCmCountEl.textContent=(+curCmCountEl.textContent||0)+1;
+  openComments(curVid,curCmCountEl)}catch(e){console.error(e)}}
+$('csend').onclick=sendComment;$('cin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendComment()}});
 let sqTimer;
 $('sq').oninput=()=>{clearTimeout(sqTimer);sqTimer=setTimeout(doSearch,300)};
 async function doSearch(){const q=$('sq').value.trim().toLowerCase(),box=$('sres');if(!q){box.innerHTML='';return}
- try{const r=await db.collection('users').where('nameLower','>=',q).where('nameLower','<=',q+'\uf8ff').limit(15).get();
+ try{const r=await db.collection('users').limit(300).get();
   box.innerHTML='';
-  r.forEach(d=>{if(d.id===me.uid)return;const u=d.data(),row=document.createElement('div');row.className='crow';
+  r.forEach(d=>{if(d.id===me.uid)return;const u=d.data(),name=(u.name||'').toLowerCase();if(!name.includes(q))return;
+   const row=document.createElement('div');row.className='crow';
    row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b></div>';
    row.querySelector('.av2').textContent=(u.name||'?')[0].toUpperCase();
    row.querySelector('b').textContent='@'+(u.name||'anonyme');
