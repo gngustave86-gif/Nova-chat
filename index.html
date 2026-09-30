@@ -119,7 +119,7 @@ nav .plus{flex:0 0 52px;height:34px;margin:0 8px;border-radius:10px;background:l
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
 const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
 let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set();
-const ADMIN_EMAIL='gngustave@gmail.com';
+const ADMIN_EMAIL='gngustave86@gmail.com';
 function isBadged(u){return !!(u&&((u.premiumUntil&&u.premiumUntil>Date.now())||u.email===ADMIN_EMAIL))}
 function setNameWithBadge(el,atName,badged){el.textContent='';el.appendChild(document.createTextNode('@'+atName));
  if(badged){const b=document.createElement('span');b.className='badge';b.textContent='\u2713';el.appendChild(b)}}
