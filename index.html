@@ -37,11 +37,12 @@ main{flex:1;position:relative;overflow:hidden}
 .side .on{color:var(--b)}.fol{background:var(--a)!important;font-size:12px!important;font-weight:700}
 .side .music{width:32px;height:32px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid rgba(255,255,255,.5);animation:spin 4s linear infinite;margin-top:2px}
 @keyframes spin{to{transform:rotate(360deg)}}
-#ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;pointer-events:none;z-index:5}
-#ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px}
-#cmts{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
-#cmts.on{display:flex}
-#cmts>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
+#ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;gap:10px;pointer-events:none;z-index:5}
+#ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px;position:relative;display:flex;align-items:center;justify-content:center}
+.ndot{display:none;position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--b);border:1.5px solid rgba(0,0,0,.35)}
+#cmts,#notifs{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
+#cmts.on,#notifs.on{display:flex}
+#cmts>div,#notifs>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
 .cmthead{padding:16px;border-bottom:1px solid var(--l);text-align:center;font-weight:700;position:relative}
 .cmthead button{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--m);font-size:20px}
 #clistc{flex:1;overflow-y:auto;padding:14px;min-height:120px}
@@ -107,7 +108,7 @@ nav .plus{flex:0 0 50px;height:32px;margin:0 10px;border-radius:9px;background:#
 
 <div id="app"><main>
 <div id="feed" class="view on"></div>
-<div id="ftop"><button id="gosearch"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+<div id="ftop"><button id="gobell"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 2a6 6 0 0 0-6 6v4l-2 4h16l-2-4V8a6 6 0 0 0-6-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 19a3 3 0 0 0 6 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="ndot" id="notifDot"></span></button><button id="gosearch"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
 <div id="chats" class="view"><div class="sbox"><span class="sicon"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres"></div><div id="clist"></div></div>
 <div id="prof" class="view"><div class="avwrap"><div class="av" id="pa"></div><button id="pchange" class="camBtn"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button><input type="file" id="pfile" accept="image/*" style="display:none"></div><h2 id="pn" style="margin:0"></h2>
 <div class="stats"><div><b id="s1">0</b><span>Abonnés</span></div><div><b id="s2">0</b><span>Abonnements</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
@@ -126,6 +127,9 @@ nav .plus{flex:0 0 50px;height:32px;margin:0 10px;border-radius:9px;background:#
 <div id="thread"><div class="thead"><button id="tback">←</button><b id="tname"></b></div>
 <div id="tmsgs"></div>
 <div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tsend">➤</button></div></div>
+
+<div id="notifs"><div><div class="cmthead">Notifications<button id="nclose">✕</button></div>
+<div id="nlist" style="flex:1;overflow-y:auto;padding:14px;min-height:120px"></div></div></div>
 
 <div id="cmts"><div><div class="cmthead">Commentaires<button id="cclose">✕</button></div>
 <div id="clistc"></div>
@@ -161,7 +165,7 @@ $('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('n
 auth.onAuthStateChanged(async u=>{me=u;if(!u){$('auth').style.display='flex';$('app').style.display='none';return}
  try{await ready}catch(e){}
  try{const d=await db.collection('users').doc(u.uid).get();if(d.exists&&!d.data().email)await db.collection('users').doc(u.uid).update({email:u.email})}catch(e){}
- $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf()});
+ $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf();refreshNotifDot()});
 $('lo').onclick=()=>auth.signOut();
 function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);$('ftop').style.display=k==1?'flex':'none';if(k==2)loadProf();if(k==3)loadChats();document.querySelectorAll('video').forEach(v=>v.pause())}
 $('n1').onclick=()=>tab(1);$('n3').onclick=()=>tab(3);$('n2').onclick=()=>tab(2);
@@ -212,9 +216,9 @@ ${v.uid!==me.uid?'<div class="folwrap"><div class="avmini"></div><div class="fol
  lb.onclick=async()=>{const on=myLikes.has(id),d=on?-1:1,ref=db.collection('likes').doc(id+'_'+me.uid),b=db.batch();
   on?myLikes.delete(id):myLikes.add(id);n+=d;paint();
   on?b.delete(ref):b.set(ref,{vid:id,uid:me.uid});b.update(db.collection('videos').doc(id),{likes:FV.increment(d)});b.update(db.collection('users').doc(v.uid),{likes:FV.increment(d)});
-  try{await b.commit()}catch(e){console.error(e)}};
+  try{await b.commit();if(!on&&v.uid!==me.uid)db.collection('notifications').add({toUid:v.uid,fromUid:me.uid,fromName:me.displayName||'anonyme',type:'like',vid:id,createdAt:Date.now(),read:false}).catch(()=>{})}catch(e){console.error(e)}};
  const cm=r.querySelector('.cm'),cc=cm.nextElementSibling;cm.innerHTML=ICO_COMMENT;cc.textContent=v.commentsCount||0;
- cm.onclick=()=>openComments(id,cc);
+ cm.onclick=()=>openComments(id,cc,v.uid);
  const sv=r.querySelector('.sv');
  const paintSave=()=>{const on=mySaves.has(id);sv.className=on?'sv on':'sv';sv.innerHTML=on?ICO_SAVE_F:ICO_SAVE_O};paintSave();
  sv.onclick=async()=>{const on=mySaves.has(id),ref=db.collection('saves').doc(id+'_'+me.uid);
@@ -226,7 +230,7 @@ ${v.uid!==me.uid?'<div class="folwrap"><div class="avmini"></div><div class="fol
 async function toggleFollow(to){const on=myFol.has(to),d=on?-1:1,ref=db.collection('follows').doc(me.uid+'_'+to),b=db.batch();
  on?myFol.delete(to):myFol.add(to);
  on?b.delete(ref):b.set(ref,{from:me.uid,to:to});b.update(db.collection('users').doc(to),{followers:FV.increment(d)});b.update(db.collection('users').doc(me.uid),{following:FV.increment(d)});
- try{await b.commit()}catch(e){console.error(e)}
+ try{await b.commit();if(!on)db.collection('notifications').add({toUid:to,fromUid:me.uid,fromName:me.displayName||'anonyme',type:'follow',createdAt:Date.now(),read:false}).catch(()=>{})}catch(e){console.error(e)}
  return !on}
 async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
  $('ua').textContent=(name[0]||'?').toUpperCase();$('ugrid').innerHTML='';$('uact').style.display='flex';
@@ -250,14 +254,31 @@ async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
   if(!vids.length)$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>'
  }catch(e){$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Erreur de chargement: '+(e.code||e.message||'inconnue')+'</div>'}}
 $('uback').onclick=()=>$('uprof').classList.remove('on');
+async function refreshNotifDot(){try{const r=await db.collection('notifications').where('toUid','==',me.uid).limit(50).get();
+ $('notifDot').style.display=r.docs.some(d=>!d.data().read)?'block':'none'}catch(e){}}
+async function openNotifs(){$('notifs').classList.add('on');$('nlist').innerHTML='Chargement…';
+ try{const r=await db.collection('notifications').where('toUid','==',me.uid).limit(50).get();
+  let docs=r.docs.map(d=>({id:d.id,ref:d.ref,...d.data()}));docs.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  $('nlist').innerHTML='';
+  if(!docs.length){$('nlist').innerHTML='<div class="empty" style="height:auto;padding:30px">Aucune notification.</div>'}
+  docs.forEach(n=>{let txt='';
+   if(n.type==='like')txt='a aimé ta vidéo';else if(n.type==='comment')txt='a commenté : '+(n.text||'');else if(n.type==='follow')txt='a commencé à te suivre';
+   const row=document.createElement('div');row.className='crow2';row.innerHTML='<b></b><span></span>';
+   row.querySelector('b').textContent='@'+(n.fromName||'quelqu\'un');row.querySelector('span').textContent=txt;
+   $('nlist').appendChild(row)});
+  const batch=db.batch();let any=false;r.forEach(d=>{if(!d.data().read){batch.update(d.ref,{read:true});any=true}});
+  if(any)try{await batch.commit()}catch(e){}
+  $('notifDot').style.display='none'
+ }catch(e){$('nlist').innerHTML='<div class="empty" style="height:auto;padding:30px">Erreur de chargement.</div>'}}
+$('gobell').onclick=openNotifs;$('nclose').onclick=()=>$('notifs').classList.remove('on');
 function toast(msg){let t=document.getElementById('toastEl');if(!t){t=document.createElement('div');t.id='toastEl';t.style.cssText='position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:30;transition:opacity .3s';document.body.appendChild(t)}
  t.textContent=msg;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',1800)}
 async function shareVideo(url,caption){
  try{if(navigator.share){await navigator.share({title:'Nova Chat',text:caption||'Regarde cette vidéo sur Nova Chat',url:url})}
   else{await navigator.clipboard.writeText(url);toast('Lien copié !')}
  }catch(e){}}
-let curVid=null,curCmCountEl=null;
-async function openComments(vid,countEl){curVid=vid;curCmCountEl=countEl;
+let curVid=null,curCmCountEl=null,curVidOwner=null;
+async function openComments(vid,countEl,ownerUid){curVid=vid;curCmCountEl=countEl;curVidOwner=ownerUid;
  $('cmts').classList.add('on');$('clistc').innerHTML='Chargement…';
  try{const r=await db.collection('videos').doc(vid).collection('comments').orderBy('createdAt').limit(100).get();
   $('clistc').innerHTML='';
@@ -271,8 +292,9 @@ $('cclose').onclick=()=>$('cmts').classList.remove('on');
 async function sendComment(){const txt=$('cin').value.trim();if(!txt||!curVid)return;$('cin').value='';
  try{await db.collection('videos').doc(curVid).collection('comments').add({uid:me.uid,name:me.displayName||'anonyme',text:txt,createdAt:Date.now()});
   await db.collection('videos').doc(curVid).update({commentsCount:FV.increment(1)});
+  if(curVidOwner&&curVidOwner!==me.uid)db.collection('notifications').add({toUid:curVidOwner,fromUid:me.uid,fromName:me.displayName||'anonyme',type:'comment',vid:curVid,text:txt.slice(0,60),createdAt:Date.now(),read:false}).catch(()=>{});
   if(curCmCountEl)curCmCountEl.textContent=(+curCmCountEl.textContent||0)+1;
-  openComments(curVid,curCmCountEl)}catch(e){console.error(e)}}
+  openComments(curVid,curCmCountEl,curVidOwner)}catch(e){console.error(e)}}
 $('csend').onclick=sendComment;$('cin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendComment()}});
 let sqTimer;
 $('sq').oninput=()=>{clearTimeout(sqTimer);sqTimer=setTimeout(doSearch,300)};
@@ -319,7 +341,7 @@ async function sendMsg(){const txt=$('tin').value.trim();if(!txt||!curChat)retur
  const ref=db.collection('chats').doc(curChat);
  try{await ref.collection('messages').add({from:me.uid,text:txt,createdAt:Date.now()});await ref.update({lastMsg:txt,lastAt:Date.now()})}catch(e){console.error(e)}}
 $('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
-$('pl').onclick=()=>{$('up').style.display='flex'};$('cx').onclick=()=>{$('up').style.display='none';$('pg').textContent=''};
+$('pl').onclick=()=>{$('up').style.display='flex';$('fl').click()};$('cx').onclick=()=>{$('up').style.display='none';$('pg').textContent=''};
 const CLOUD_NAME='qj5r8wt2',UPLOAD_PRESET='nova_chat_videos';
 $('pub').onclick=()=>{const f=$('fl').files[0];if(!f){$('pg').textContent='Choisis une vidéo.';return}
  if(f.size>60*1024*1024){$('pg').textContent='Vidéo trop lourde (60 Mo max).';return}
