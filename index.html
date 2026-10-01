@@ -68,7 +68,16 @@ main{flex:1;position:relative;overflow:hidden}
 nav{display:flex;align-items:center;border-top:1px solid var(--l);padding-bottom:env(safe-area-inset-bottom,0);background:var(--bg)}
 nav button{flex:1;background:none;border:0;color:var(--m);padding:8px 0 6px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px}
 nav button.on{color:#fff}
-nav .plus{flex:0 0 50px;height:32px;margin:0 10px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;padding:0}
+nav .plus{flex:0 0 50px;height:32px;margin:0 10px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;padding:0;border:2.5px solid;border-image:linear-gradient(90deg,#25F4EE,#FE2C55) 1}
+nav button{position:relative}
+.navbadge{display:none;position:absolute;top:0;right:24%;background:var(--b);color:#fff;border-radius:10px;min-width:16px;height:16px;font-size:10px;align-items:center;justify-content:center;padding:0 3px;font-weight:700}
+.bio{color:var(--m);font-size:13px;margin:10px auto 0;white-space:pre-wrap;max-width:280px;line-height:1.4}
+.bioRow{display:flex;align-items:center;justify-content:center;gap:6px}
+.bioRow button{background:none;border:0;color:var(--m);padding:2px;display:flex}
+.ptabs{display:flex;border-top:1px solid var(--l);border-bottom:1px solid var(--l);margin-top:16px}
+.ptabs button{flex:1;background:none;border:0;color:var(--m);padding:11px 0;display:flex;align-items:center;justify-content:center}
+.ptabs button.on{color:#fff;border-bottom:2px solid #fff}
+.vcount{position:absolute;left:6px;bottom:6px;display:flex;align-items:center;gap:3px;color:#fff;font-size:11px;text-shadow:0 1px 2px rgba(0,0,0,.8);font-weight:600}
 #up{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;z-index:9}
 #up>div{background:var(--bg);width:100%;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0));border-radius:20px 20px 0 0;display:flex;flex-direction:column;gap:12px}
 #pg{color:var(--m);font-size:13px}
@@ -111,12 +120,15 @@ nav .plus{flex:0 0 50px;height:32px;margin:0 10px;border-radius:9px;background:#
 <div id="ftop"><button id="gobell"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 2a6 6 0 0 0-6 6v4l-2 4h16l-2-4V8a6 6 0 0 0-6-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 19a3 3 0 0 0 6 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="ndot" id="notifDot"></span></button><button id="gosearch"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
 <div id="chats" class="view"><div class="sbox"><span class="sicon"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres"></div><div id="clist"></div></div>
 <div id="prof" class="view"><div class="avwrap"><div class="av" id="pa"></div><button id="pchange" class="camBtn"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button><input type="file" id="pfile" accept="image/*" style="display:none"></div><h2 id="pn" style="margin:0"></h2>
-<div class="stats"><div><b id="s1">0</b><span>Abonnés</span></div><div><b id="s2">0</b><span>Abonnements</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
-<button class="out" id="lo">Se déconnecter</button></div>
+<div class="stats"><div><b id="s1">0</b><span>Abonnements</span></div><div><b id="s2">0</b><span>Abonnés</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
+<div class="bioRow"><p class="bio" id="pbio"></p><button id="bioEdit"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+<button class="out" id="lo" style="margin-top:14px">Se déconnecter</button>
+<div class="ptabs"><button class="on" data-t="all"><svg viewBox="0 0 24 24" width="19" height="19"><rect x="3" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button><button data-t="saved"><svg viewBox="0 0 24 24" width="19" height="19"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button><button data-t="liked"><svg viewBox="0 0 24 24" width="19" height="19"><path d="M12 21s-7.5-4.687-10-9.5C.5 7 3 3.5 7 3.5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6.5 3.5 5 8-2.5 4.813-10 9.5-10 9.5z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+<div id="pgrid" class="grid"></div></div>
 </main>
 <nav>
 <button id="n1" class="on"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Accueil</span></button>
-<button id="n3"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.3 1.1 4.4 2.9 5.9-.1.9-.5 2.1-1.4 3.2 1.5-.1 3-.6 4.1-1.3 1.3.4 2.8.7 4.4.7 5.5 0 10-3.8 10-8.5S17.5 3 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Chat</span></button>
+<button id="n3"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.3 1.1 4.4 2.9 5.9-.1.9-.5 2.1-1.4 3.2 1.5-.1 3-.6 4.1-1.3 1.3.4 2.8.7 4.4.7 5.5 0 10-3.8 10-8.5S17.5 3 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="navbadge" id="chatBadge"></span><span>Chat</span></button>
 <button class="plus" id="pl"><svg viewBox="0 0 24 24" width="20" height="20"><line x1="12" y1="5" x2="12" y2="19" stroke="#0b0b10" stroke-width="3" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="#0b0b10" stroke-width="3" stroke-linecap="round"/></svg></button>
 <button id="n2"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Profil</span></button>
 </nav></div>
@@ -137,14 +149,15 @@ nav .plus{flex:0 0 50px;height:32px;margin:0 10px;border-radius:9px;background:#
 
 <div id="uprof"><div class="thead"><button id="uback">←</button><b>Profil</b></div>
 <div id="ubody"><div class="av" id="ua"></div><h2 id="un" style="margin:0"></h2>
-<div class="stats"><div><b id="uf1">0</b><span>Abonnés</span></div><div><b id="uf2">0</b><span>Abonnements</span></div><div><b id="uf3">0</b><span>J'aime</span></div></div>
+<div class="stats"><div><b id="uf1">0</b><span>Abonnements</span></div><div><b id="uf2">0</b><span>Abonnés</span></div><div><b id="uf3">0</b><span>J'aime</span></div></div>
+<p class="bio" id="ubio"></p>
 <div id="uact" style="display:flex;gap:10px;margin:14px 0"><button class="btn" id="ufol" style="flex:1">Suivre</button><button class="out" id="umsg" style="flex:1">Message</button></div>
 <div id="ugrid" class="grid"></div></div></div>
 
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
 const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
-let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set();
+let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set(),viewedSet=new Set();
 const ADMIN_EMAIL='gngustave86@gmail.com';
 function isBadged(u){return !!(u&&((u.premiumUntil&&u.premiumUntil>Date.now())||u.email===ADMIN_EMAIL))}
 function setNameWithBadge(el,atName,badged){el.textContent='';el.appendChild(document.createTextNode('@'+atName));
@@ -165,13 +178,38 @@ $('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('n
 auth.onAuthStateChanged(async u=>{me=u;if(!u){$('auth').style.display='flex';$('app').style.display='none';return}
  try{await ready}catch(e){}
  try{const d=await db.collection('users').doc(u.uid).get();if(d.exists&&!d.data().email)await db.collection('users').doc(u.uid).update({email:u.email})}catch(e){}
- $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf();refreshNotifDot()});
+ $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf();refreshNotifDot();refreshChatBadge()});
 $('lo').onclick=()=>auth.signOut();
 function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);$('ftop').style.display=k==1?'flex':'none';if(k==2)loadProf();if(k==3)loadChats();document.querySelectorAll('video').forEach(v=>v.pause())}
 $('n1').onclick=()=>tab(1);$('n3').onclick=()=>tab(3);$('n2').onclick=()=>tab(2);
 $('gosearch').onclick=()=>tab(3);
+function fmtCount(n){n=n||0;if(n>=1000000)return (n/1000000).toFixed(1).replace('.',',')+'M';if(n>=1000)return (n/1000).toFixed(1).replace('.',',')+'K';return ''+n}
+function gridTile(v){const t=document.createElement('div');t.className='vtile';
+ t.innerHTML='<video muted playsinline preload="metadata"></video><div class="vcount"><svg viewBox="0 0 24 24" width="11" height="11"><path d="M5 4l14 8-14 8z" fill="currentColor"/></svg><span></span></div>';
+ const vd=t.querySelector('video');vd.src=v.url;t.querySelector('.vcount span').textContent=fmtCount(v.views||0);
+ t.onclick=()=>{vd.paused?vd.play():vd.pause()};
+ return t}
 async function loadProf(){const d=await db.collection('users').doc(me.uid).get(),u=d.data()||{};const n=u.name||me.displayName||'Moi';
- setAvatar($('pa'),u.photoURL,n[0].toUpperCase());setNameWithBadge($('pn'),n,isBadged(u));$('s1').textContent=u.followers||0;$('s2').textContent=u.following||0;$('s3').textContent=u.likes||0}
+ setAvatar($('pa'),u.photoURL,n[0].toUpperCase());setNameWithBadge($('pn'),n,isBadged(u));
+ $('s1').textContent=u.following||0;$('s2').textContent=u.followers||0;$('s3').textContent=u.likes||0;
+ $('pbio').textContent=u.bio||'';
+ loadProfGrid('all')}
+$('bioEdit').onclick=async()=>{const cur=$('pbio').textContent;const val=window.prompt('Ta bio (150 caractères max) :',cur);if(val===null)return;const trimmed=val.slice(0,150);
+ try{await db.collection('users').doc(me.uid).update({bio:trimmed});$('pbio').textContent=trimmed}catch(e){toast('Erreur')}};
+document.querySelectorAll('.ptabs button').forEach(b=>b.onclick=()=>loadProfGrid(b.dataset.t));
+async function loadProfGrid(type){const box=$('pgrid');box.innerHTML='Chargement…';
+ document.querySelectorAll('.ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===type));
+ try{let vids=[];
+  if(type==='all'){const vs=await db.collection('videos').where('uid','==',me.uid).limit(60).get();vids=vs.docs.map(d=>d.data())}
+  else{const col=type==='saved'?'saves':'likes';const sv=await db.collection(col).where('uid','==',me.uid).limit(60).get();
+   const ids=sv.docs.map(d=>d.data().vid);
+   const results=await Promise.all(ids.map(id=>db.collection('videos').doc(id).get()));
+   vids=results.filter(d=>d.exists).map(d=>d.data())}
+  vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  box.innerHTML='';
+  if(!vids.length){box.innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>';return}
+  vids.forEach(v=>box.appendChild(gridTile(v)))
+ }catch(e){box.innerHTML='<div class="empty" style="height:auto;padding:20px">Erreur de chargement.</div>'}}
 $('pchange').onclick=()=>$('pfile').click();
 $('pfile').addEventListener('change',async()=>{const f=$('pfile').files[0];if(!f)return;
  if(f.size>8*1024*1024){toast('Image trop lourde (8 Mo max)');return}
@@ -189,9 +227,12 @@ async function loadFeed(){const f=$('feed');
  const uids=[...new Set(vs.docs.map(d=>d.data().uid))],pm={};
  await Promise.all(uids.map(async u=>{try{const d2=await db.collection('users').doc(u).get();pm[u]=d2.data()||null}catch(e){}}));
  vs.forEach(d=>f.appendChild(reel(d.id,d.data(),pm)));
- const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');if(e.isIntersecting)v.play().catch(()=>{});else v.pause()}),{threshold:.7});
+ const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');
+  if(e.isIntersecting){v.play().catch(()=>{});const vid=e.target.dataset.vid;
+   if(vid&&!viewedSet.has(vid)){viewedSet.add(vid);db.collection('videos').doc(vid).update({views:FV.increment(1)}).catch(()=>{})}}
+  else v.pause()}),{threshold:.7});
  f.querySelectorAll('.reel').forEach(r=>io.observe(r))}
-function reel(id,v,pm){const r=document.createElement('div');r.className='reel';pm=pm||{};
+function reel(id,v,pm){const r=document.createElement('div');r.className='reel';r.dataset.vid=id;pm=pm||{};
  r.innerHTML=`<video loop playsinline muted></video>
 <div class="info"><b></b><span></span><div class="snd">🎵 <span>son original</span></div></div>
 <div class="side">
@@ -236,9 +277,10 @@ async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
  $('ua').textContent=(name[0]||'?').toUpperCase();$('ugrid').innerHTML='';$('uact').style.display='flex';
  $('uprof').classList.add('on');
  try{const [ud,vs]=await Promise.all([db.collection('users').doc(uid).get(),db.collection('videos').where('uid','==',uid).limit(60).get()]);
-  const u=ud.data()||{};setAvatar($('ua'),u.photoURL,(name[0]||'?').toUpperCase());setNameWithBadge($('un'),name,isBadged(u));$('uf1').textContent=u.followers||0;$('uf2').textContent=u.following||0;$('uf3').textContent=u.likes||0;
+  const u=ud.data()||{};setAvatar($('ua'),u.photoURL,(name[0]||'?').toUpperCase());setNameWithBadge($('un'),name,isBadged(u));
+  $('uf1').textContent=u.following||0;$('uf2').textContent=u.followers||0;$('uf3').textContent=u.likes||0;$('ubio').textContent=u.bio||'';
   $('ufol').textContent=myFol.has(uid)?'Abonné(e)':'Suivre';
-  $('ufol').onclick=async()=>{const on=await toggleFollow(uid);$('ufol').textContent=on?'Abonné(e)':'Suivre';$('uf1').textContent=Math.max(0,(+$('uf1').textContent)+(on?1:-1))};
+  $('ufol').onclick=async()=>{const on=await toggleFollow(uid);$('ufol').textContent=on?'Abonné(e)':'Suivre';$('uf2').textContent=Math.max(0,(+$('uf2').textContent)+(on?1:-1))};
   $('umsg').onclick=()=>{$('uprof').classList.remove('on');openChat(uid,name)};
   let adminBox=$('adminBox');if(!adminBox){adminBox=document.createElement('div');adminBox.id='adminBox';adminBox.style.margin='0 0 14px';$('uact').insertAdjacentElement('afterend',adminBox)}
   adminBox.innerHTML='';
@@ -249,8 +291,8 @@ async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
     try{await db.collection('users').doc(uid).update({premiumUntil:val});toast(isPrem?'Badge retiré':'Badge activé pour 1 mois');openProfile(uid,name)}catch(e){toast('Erreur')}};
    adminBox.appendChild(ab)}
   let vids=vs.docs.map(d=>d.data());vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  vids.forEach(v=>{const t=document.createElement('div');t.className='vtile';t.innerHTML='<video muted playsinline preload="metadata"></video>';
-   const vd=t.querySelector('video');vd.src=v.url;t.onclick=()=>{vd.paused?vd.play():vd.pause()};$('ugrid').appendChild(t)});
+  $('ugrid').innerHTML='';
+  vids.forEach(v=>$('ugrid').appendChild(gridTile(v)));
   if(!vids.length)$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>'
  }catch(e){$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Erreur de chargement: '+(e.code||e.message||'inconnue')+'</div>'}}
 $('uback').onclick=()=>$('uprof').classList.remove('on');
@@ -328,6 +370,7 @@ async function openChat(otherUid,otherName){const chatId=[me.uid,otherUid].sort(
  try{const snap=await ref.get();
   if(!snap.exists){const myName=me.displayName||'Moi',names={};names[me.uid]=myName;names[otherUid]=otherName;
    await ref.set({participants:[me.uid,otherUid].sort(),names:names,lastMsg:'',lastAt:Date.now()})}
+  const upd={};upd['read_'+me.uid]=Date.now();ref.update(upd).then(refreshChatBadge).catch(()=>{});
  }catch(e){}
  $('tname').textContent='@'+otherName;$('thread').classList.add('on');$('tmsgs').innerHTML='';
  if(curUnsub)curUnsub();
@@ -339,7 +382,10 @@ async function openChat(otherUid,otherName){const chatId=[me.uid,otherUid].sort(
 $('tback').onclick=()=>{$('thread').classList.remove('on');if(curUnsub){curUnsub();curUnsub=null}curChat=null;loadChats()};
 async function sendMsg(){const txt=$('tin').value.trim();if(!txt||!curChat)return;$('tin').value='';
  const ref=db.collection('chats').doc(curChat);
- try{await ref.collection('messages').add({from:me.uid,text:txt,createdAt:Date.now()});await ref.update({lastMsg:txt,lastAt:Date.now()})}catch(e){console.error(e)}}
+ try{await ref.collection('messages').add({from:me.uid,text:txt,createdAt:Date.now()});await ref.update({lastMsg:txt,lastAt:Date.now(),lastFrom:me.uid})}catch(e){console.error(e)}}
+async function refreshChatBadge(){try{const r=await db.collection('chats').where('participants','array-contains',me.uid).get();
+ let n=0;r.forEach(d=>{const c=d.data(),readAt=c['read_'+me.uid]||0;if((c.lastAt||0)>readAt&&c.lastFrom&&c.lastFrom!==me.uid)n++});
+ const bd=$('chatBadge');if(n>0){bd.textContent=n>9?'9+':n;bd.style.display='flex'}else{bd.style.display='none'}}catch(e){}}
 $('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
 $('pl').onclick=()=>{$('up').style.display='flex';$('fl').click()};$('cx').onclick=()=>{$('up').style.display='none';$('pg').textContent=''};
 const CLOUD_NAME='qj5r8wt2',UPLOAD_PRESET='nova_chat_videos';
