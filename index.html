@@ -49,9 +49,20 @@ main{flex:1;position:relative;overflow:hidden}
 .cmthead{padding:16px;border-bottom:1px solid var(--l);text-align:center;font-weight:700;position:relative}
 .cmthead button{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--m);font-size:20px}
 #clistc{flex:1;overflow-y:auto;padding:14px;min-height:120px}
-.crow2{margin-bottom:14px}
-.crow2 b{display:block;font-size:12px;color:var(--m);margin-bottom:2px}
-.crow2 span{font-size:14px}
+.ihead{font-size:21px;font-weight:800;padding:14px 14px 10px;padding-top:calc(14px + env(safe-area-inset-top,0))}
+.iseg{display:flex;gap:4px;padding:4px;margin:0 14px 10px;background:var(--s);border-radius:13px}
+.iseg button{flex:1;border:0;background:transparent;color:var(--m);padding:9px 0;border-radius:10px;font-size:13.5px;font-weight:700;position:relative;transition:background .15s,color .15s}
+.iseg button.active{background:var(--bg);color:var(--t)}
+.segdot{position:absolute;top:2px;right:28%;width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b))}
+.nrow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--l)}
+.nrow .navwrap{position:relative;flex:0 0 44px}
+.nrow .nicon{position:absolute;right:-3px;bottom:-3px;width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;border:2px solid var(--bg)}
+.nrow .nicon.like{background:#ff3b5c}.nrow .nicon.comment{background:#3ba7ff}.nrow .nicon.follow{background:var(--a)}
+.nrow .ntxt{flex:1;font-size:13.5px;line-height:1.35;min-width:0}
+.nrow .ntxt b{font-weight:700}
+.nrow .ntime{color:var(--m);font-size:11.5px;flex:0 0 auto}
+.nrow.unread{background:rgba(124,92,255,.08);margin:0 -14px;padding:10px 14px;border-bottom:1px solid var(--l)}
+.nthumb{flex:0 0 40px;width:40px;height:40px;border-radius:8px;object-fit:cover;background:var(--s)}
 .cinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0))}
 .cinput input{flex:1}
 .cinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:40px;height:40px;flex:0 0 40px}
@@ -136,7 +147,10 @@ nav button{position:relative}
 <div id="feed" class="view on"></div>
 <div id="ftop"><button id="gosearch"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
 <div id="chats" class="view"><div class="sbox"><span class="sicon"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres"></div></div>
-<div id="inbox" class="view"><div class="isec">Notifications</div><div id="nlistInline" style="padding:0 14px"></div><div class="isec">Messages</div><div id="clist" style="padding:0 14px"></div></div>
+<div id="inbox" class="view"><div class="ihead">Messages</div>
+<div class="iseg"><button id="segChats" class="active">Discussions</button><button id="segAct">Activité<span class="segdot" id="segActDot" style="display:none"></span></button></div>
+<div id="inboxChats"><div id="clist" style="padding:0 14px"></div></div>
+<div id="inboxAct" style="display:none"><div id="nlistInline" style="padding:0 14px"></div></div></div>
 <div id="prof" class="view"><div class="avwrap"><div class="av" id="pa"></div><button id="pchange" class="camBtn"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button><input type="file" id="pfile" accept="image/*" style="display:none"></div><h2 id="pn" style="margin:0"></h2>
 <div class="stats"><div><b id="s1">0</b><span>Abonnements</span></div><div><b id="s2">0</b><span>Abonnés</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
 <div class="bioRow"><p class="bio" id="pbio"></p><button id="bioEdit"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
@@ -185,6 +199,10 @@ const ICO_COMMENT='<svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 4
 const ICO_SAVE_O='<svg viewBox="0 0 24 24" width="21" height="21"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
 const ICO_SAVE_F='<svg viewBox="0 0 24 24" width="21" height="21"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" fill="currentColor"/></svg>';
 const ICO_SHARE='<svg viewBox="0 0 24 24" width="20" height="20"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+const ICO_FOLLOW='<svg viewBox="0 0 24 24" width="13" height="13"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 9c0-3.3 3.1-6 7-6s7 2.7 7 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 8v6M16 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+function fmtAgo(ts){if(!ts)return'';const s=Math.max(0,Math.floor((Date.now()-ts)/1000));
+ if(s<60)return'à l\'instant';if(s<3600)return Math.floor(s/60)+' min';if(s<86400)return Math.floor(s/3600)+' h';
+ if(s<604800)return Math.floor(s/86400)+' j';return Math.floor(s/604800)+' sem'}
 const E={'auth/invalid-email':'E-mail invalide.','auth/email-already-in-use':'Cet e-mail est déjà utilisé.','auth/weak-password':'Mot de passe : 6 caractères min.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/network-request-failed':'Connexion impossible (réseau ou domaine non autorisé).'};
 $('sw').onclick=()=>{signup=!signup;$('nm').style.display=signup?'block':'none';$('go').textContent=signup?'Créer mon compte':'Se connecter';$('sw').innerHTML=signup?'<b>J\'ai déjà un compte</b>':'Pas de compte ? <b>Créer un compte</b>';$('err').textContent=''};
 $('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('nm').value.trim();$('err').textContent='';
@@ -318,21 +336,35 @@ async function renderNotifsInline(container){container.innerHTML='Chargement…'
  try{const r=await db.collection('notifications').where('toUid','==',me.uid).limit(50).get();
   let docs=r.docs.map(d=>({id:d.id,ref:d.ref,...d.data()}));docs.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   container.innerHTML='';
-  if(!docs.length){container.innerHTML='<div class="empty" style="height:auto;padding:10px 0;text-align:left">Aucune notification pour le moment.</div>'}
-  docs.forEach(n=>{let txt='';
+  if(!docs.length){container.innerHTML='<div class="empty" style="height:auto;padding:30px 0;text-align:center">Aucune notification pour le moment.</div>';
+   const batch0=db.batch();r.forEach(d=>{if(!d.data().read)batch0.update(d.ref,{read:true})});try{await batch0.commit()}catch(e){}return}
+  const uids=[...new Set(docs.map(n=>n.fromUid))];const profiles={};
+  await Promise.all(uids.map(async uid=>{try{const d=await db.collection('users').doc(uid).get();profiles[uid]=d.data()||{}}catch(e){profiles[uid]={}}}));
+  docs.forEach(n=>{let txt='';const icon=n.type==='like'?ICO_HEART_F:n.type==='comment'?ICO_COMMENT:ICO_FOLLOW;
+   const iconCls=n.type==='like'?'like':n.type==='comment'?'comment':'follow';
    if(n.type==='like')txt='a aimé ta vidéo';else if(n.type==='comment')txt='a commenté : '+(n.text||'');else if(n.type==='follow')txt='a commencé à te suivre';
-   const row=document.createElement('div');row.className='crow2';row.innerHTML='<b></b><span></span>';
-   row.querySelector('b').textContent='@'+(n.fromName||'quelqu\'un');row.querySelector('span').textContent=txt;
+   const u=profiles[n.fromUid]||{},row=document.createElement('div');row.className='nrow'+(!n.read?' unread':'');
+   row.innerHTML='<div class="navwrap"><div class="av2" style="width:44px;height:44px"></div><div class="nicon '+iconCls+'"></div></div><div class="ntxt"><b></b> <span></span></div><div class="ntime"></div>';
+   setAvatar(row.querySelector('.av2'),u.photoURL,(n.fromName||'?')[0].toUpperCase());
+   row.querySelector('.nicon').innerHTML=icon.replace(/width="\d+" height="\d+"/,'width="11" height="11"');
+   row.querySelector('b').textContent='@'+(n.fromName||'quelqu\'un');row.querySelector('.ntxt span').textContent=txt;
+   row.querySelector('.ntime').textContent=fmtAgo(n.createdAt);
+   row.onclick=()=>openProfile(n.fromUid,n.fromName||'anonyme');
    container.appendChild(row)});
   const batch=db.batch();let any=false;r.forEach(d=>{if(!d.data().read){batch.update(d.ref,{read:true});any=true}});
   if(any)try{await batch.commit()}catch(e){}
  }catch(e){container.innerHTML='<div class="empty" style="height:auto;padding:10px 0">Erreur de chargement.</div>'}}
-async function loadInbox(){await renderNotifsInline($('nlistInline'));await loadChats();refreshInboxBadge()}
-async function refreshInboxBadge(){let n=0;
+function switchInboxSeg(k){$('segChats').classList.toggle('active',k==='chats');$('segAct').classList.toggle('active',k==='act');
+ $('inboxChats').style.display=k==='chats'?'block':'none';$('inboxAct').style.display=k==='act'?'block':'none';
+ if(k==='act'){renderNotifsInline($('nlistInline')).then(refreshInboxBadge)}}
+$('segChats').onclick=()=>switchInboxSeg('chats');$('segAct').onclick=()=>switchInboxSeg('act');
+async function loadInbox(){await loadChats();await refreshInboxBadge()}
+async function refreshInboxBadge(){let n=0,hasAct=false;
  try{const r=await db.collection('chats').where('participants','array-contains',me.uid).get();
   r.forEach(d=>{const c=d.data(),readAt=c['read_'+me.uid]||0;if((c.lastAt||0)>readAt&&c.lastFrom&&c.lastFrom!==me.uid)n++})}catch(e){}
- try{const r2=await db.collection('notifications').where('toUid','==',me.uid).limit(50).get();r2.forEach(d=>{if(!d.data().read)n++})}catch(e){}
- const bd=$('inboxBadge');if(n>0){bd.textContent=n>9?'9+':n;bd.style.display='flex'}else{bd.style.display='none'}}
+ try{const r2=await db.collection('notifications').where('toUid','==',me.uid).limit(50).get();r2.forEach(d=>{if(!d.data().read){n++;hasAct=true}})}catch(e){}
+ const bd=$('inboxBadge');if(n>0){bd.textContent=n>9?'9+':n;bd.style.display='flex'}else{bd.style.display='none'}
+ $('segActDot').style.display=hasAct?'block':'none'}
 function toast(msg){let t=document.getElementById('toastEl');if(!t){t=document.createElement('div');t.id='toastEl';t.style.cssText='position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:30;transition:opacity .3s';document.body.appendChild(t)}
  t.textContent=msg;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',1800)}
 async function shareVideo(url,caption){
