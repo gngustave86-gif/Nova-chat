@@ -30,6 +30,16 @@ main{flex:1;position:relative;overflow:hidden}
 .view{position:absolute;inset:0;display:none}.view.on{display:block}
 #feed{overflow-y:scroll;scroll-snap-type:y mandatory}
 .reel{height:100%;scroll-snap-align:start;scroll-snap-stop:always;position:relative;background:#000}
+.heartburst{position:absolute;top:50%;left:50%;color:#fff;pointer-events:none;z-index:5;filter:drop-shadow(0 2px 10px rgba(0,0,0,.4));animation:heartpop .75s ease forwards}
+@keyframes heartpop{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}18%{transform:translate(-50%,-50%) scale(1.15);opacity:1}32%{transform:translate(-50%,-50%) scale(.96);opacity:1}100%{transform:translate(-50%,-50%) scale(1.25);opacity:0}}
+.prog{position:absolute;left:0;right:0;bottom:0;height:2.5px;background:rgba(255,255,255,.25);z-index:3}
+.progfill{height:100%;width:0;background:#fff}
+.htag{color:#6fb3ff;font-weight:600}
+#htag,#vview{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
+#htag.on,#vview.on{display:flex}
+#hgrid{flex:1;overflow-y:auto;padding:4px 14px 20px}
+#vview .thead{position:relative;z-index:6;background:rgba(0,0,0,.3)}
+#vviewBody{flex:1;position:relative}
 .reel video{width:100%;height:100%;object-fit:cover}
 .info{position:absolute;left:14px;bottom:18px;right:84px;text-shadow:0 1px 4px #000}
 .info b{display:block;margin-bottom:4px}
@@ -43,9 +53,9 @@ main{flex:1;position:relative;overflow:hidden}
 #ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;gap:10px;pointer-events:none;z-index:5}
 #ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px;position:relative;display:flex;align-items:center;justify-content:center}
 .ndot{display:none;position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--b);border:1.5px solid rgba(0,0,0,.35)}
-#cmts,#notifs{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
-#cmts.on,#notifs.on{display:flex}
-#cmts>div,#notifs>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
+#cmts,#notifs,#flist{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
+#cmts.on,#notifs.on,#flist.on{display:flex}
+#cmts>div,#notifs>div,#flist>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
 .cmthead{padding:16px;border-bottom:1px solid var(--l);text-align:center;font-weight:700;position:relative}
 .cmthead button{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--m);font-size:20px}
 #clistc{flex:1;overflow-y:auto;padding:14px;min-height:120px}
@@ -77,7 +87,7 @@ main{flex:1;position:relative;overflow:hidden}
 .avmini img{width:100%;height:100%;object-fit:cover}
 .folbadge{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:var(--b);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);line-height:1}
 .folbadge.on{background:#2ecc71}
-.stats{display:flex;justify-content:space-around;margin:22px 0}.stats b{display:block;font-size:20px}.stats span{color:var(--m);font-size:13px}
+.stats{display:flex;justify-content:space-around;margin:22px 0}.stats b{display:block;font-size:20px}.stats span{color:var(--m);font-size:13px}.stats>div.tap{cursor:pointer}
 .out{background:var(--s);border:1px solid var(--l);color:var(--t);border-radius:12px;padding:12px;width:100%}
 nav{display:flex;align-items:center;border-top:1px solid var(--l);padding-bottom:env(safe-area-inset-bottom,0);background:var(--bg)}
 nav button{flex:1;background:none;border:0;color:var(--m);padding:8px 0 6px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px}
@@ -97,7 +107,16 @@ nav button{position:relative}
 #up{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;z-index:9}
 #up>div{background:var(--bg);width:100%;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0));border-radius:20px 20px 0 0;display:flex;flex-direction:column;gap:12px}
 #pg{color:var(--m);font-size:13px}
-#chats{padding:14px;overflow-y:auto}
+#chats{padding:0 0 14px;overflow-y:auto}
+.sugrow{display:flex;align-items:center;gap:12px;padding:9px 4px}
+.sugrow .av2{flex:0 0 44px}
+.sugrow b{display:block;font-size:14.5px}
+.sugrow span{display:block;font-size:12px;color:var(--m);margin-top:1px}
+.sfolbtn{flex:0 0 auto;border:0;padding:7px 15px;border-radius:9px;font-size:12.5px;font-weight:700;background:var(--t);color:var(--bg)}
+.sfolbtn.on{background:transparent;border:1px solid var(--l);color:var(--t)}
+.recRow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.recRow .crow,.recRow .sugrow{flex:1}
+.recX{background:none;border:0;color:var(--m);font-size:18px;padding:4px 8px}
 .sbox{position:relative;margin-bottom:10px}
 .sbox .sicon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--m);display:flex;pointer-events:none}
 #sq{padding-left:38px}
@@ -146,13 +165,13 @@ nav button{position:relative}
 <div id="app"><main>
 <div id="feed" class="view on"></div>
 <div id="ftop"><button id="gosearch"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
-<div id="chats" class="view"><div class="sbox"><span class="sicon"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres"></div></div>
+<div id="chats" class="view"><div class="ihead" style="padding-bottom:0">Ami(e)s</div><div class="sbox" style="margin:12px 14px 6px"><span class="sicon"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres" style="padding:0 14px"></div><div id="sdefault" style="padding:0 14px 20px;overflow-y:auto"></div></div>
 <div id="inbox" class="view"><div class="ihead">Messages</div>
 <div class="iseg"><button id="segChats" class="active">Discussions</button><button id="segAct">Activité<span class="segdot" id="segActDot" style="display:none"></span></button></div>
 <div id="inboxChats"><div id="clist" style="padding:0 14px"></div></div>
 <div id="inboxAct" style="display:none"><div id="nlistInline" style="padding:0 14px"></div></div></div>
 <div id="prof" class="view"><div class="avwrap"><div class="av" id="pa"></div><button id="pchange" class="camBtn"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button><input type="file" id="pfile" accept="image/*" style="display:none"></div><h2 id="pn" style="margin:0"></h2>
-<div class="stats"><div><b id="s1">0</b><span>Abonnements</span></div><div><b id="s2">0</b><span>Abonnés</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
+<div class="stats"><div class="tap" id="s1w"><b id="s1">0</b><span>Abonnements</span></div><div class="tap" id="s2w"><b id="s2">0</b><span>Abonnés</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
 <div class="bioRow"><p class="bio" id="pbio"></p><button id="bioEdit"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
 <button class="out" id="lo" style="margin-top:14px">Se déconnecter</button>
 <div class="ptabs"><button class="on" data-t="all"><svg viewBox="0 0 24 24" width="19" height="19"><rect x="3" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button><button data-t="saved"><svg viewBox="0 0 24 24" width="19" height="19"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button><button data-t="liked"><svg viewBox="0 0 24 24" width="19" height="19"><path d="M12 21s-7.5-4.687-10-9.5C.5 7 3 3.5 7 3.5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6.5 3.5 5 8-2.5 4.813-10 9.5-10 9.5z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
@@ -177,9 +196,16 @@ nav button{position:relative}
 <div id="clistc"></div>
 <div class="cinput"><input id="cin" placeholder="Ajouter un commentaire..."><button id="csend">➤</button></div></div></div>
 
+<div id="flist"><div><div class="cmthead" id="flistTitle">Abonnés<button id="flistClose">✕</button></div>
+<div id="flistBody" style="overflow-y:auto;padding:4px 14px 20px"></div></div></div>
+
+<div id="htag"><div class="thead"><button id="hback">←</button><b id="htitle">#tag</b></div><div id="hgrid" class="grid"></div></div>
+
+<div id="vview"><div class="thead"><button id="vback">←</button><div style="flex:1"></div><button id="vdel" style="display:none"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button></div><div id="vviewBody"></div></div>
+
 <div id="uprof"><div class="thead"><button id="uback">←</button><b>Profil</b></div>
 <div id="ubody"><div class="av" id="ua"></div><h2 id="un" style="margin:0"></h2>
-<div class="stats"><div><b id="uf1">0</b><span>Abonnements</span></div><div><b id="uf2">0</b><span>Abonnés</span></div><div><b id="uf3">0</b><span>J'aime</span></div></div>
+<div class="stats"><div class="tap" id="uf1w"><b id="uf1">0</b><span>Abonnements</span></div><div class="tap" id="uf2w"><b id="uf2">0</b><span>Abonnés</span></div><div><b id="uf3">0</b><span>J'aime</span></div></div>
 <p class="bio" id="ubio"></p>
 <div id="uact" style="display:flex;gap:10px;margin:14px 0"><button class="btn" id="ufol" style="flex:1">Suivre</button><button class="out" id="umsg" style="flex:1">Message</button></div>
 <div id="ugrid" class="grid"></div></div></div>
@@ -187,7 +213,7 @@ nav button{position:relative}
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
 const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
-let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set(),viewedSet=new Set();
+let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set(),viewedSet=new Set(),myBlocked=new Set();
 const ADMIN_EMAIL='gngustave86@gmail.com';
 function isBadged(u){return !!(u&&((u.premiumUntil&&u.premiumUntil>Date.now())||u.email===ADMIN_EMAIL))}
 function setNameWithBadge(el,atName,badged){el.textContent='';el.appendChild(document.createTextNode('@'+atName));
@@ -217,17 +243,18 @@ $('lo').onclick=()=>auth.signOut();
 function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('inbox').classList.toggle('on',k==4);
  $('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);$('n4').classList.toggle('on',k==4);
  $('ftop').style.display=k==1?'flex':'none';if(k==2)loadProf();if(k==4)loadInbox();document.querySelectorAll('video').forEach(v=>v.pause())}
-$('n1').onclick=()=>tab(1);$('n3').onclick=()=>tab(3);$('n2').onclick=()=>tab(2);$('n4').onclick=()=>tab(4);
-$('gosearch').onclick=()=>tab(3);
+$('n1').onclick=()=>tab(1);$('n3').onclick=()=>{tab(3);if(!$('sq').value.trim())renderSearchDefault()};$('n2').onclick=()=>tab(2);$('n4').onclick=()=>tab(4);
+$('gosearch').onclick=()=>{tab(3);if(!$('sq').value.trim())renderSearchDefault()};
 function fmtCount(n){n=n||0;if(n>=1000000)return (n/1000000).toFixed(1).replace('.',',')+'M';if(n>=1000)return (n/1000).toFixed(1).replace('.',',')+'K';return ''+n}
 function gridTile(v){const t=document.createElement('div');t.className='vtile';
  t.innerHTML='<video muted playsinline preload="metadata"></video><div class="vcount"><svg viewBox="0 0 24 24" width="11" height="11"><path d="M5 4l14 8-14 8z" fill="currentColor"/></svg><span></span></div>';
  const vd=t.querySelector('video');vd.src=v.url;t.querySelector('.vcount span').textContent=fmtCount(v.views||0);
- t.onclick=()=>{vd.paused?vd.play():vd.pause()};
+ t.onclick=()=>openSingleVideo(v);
  return t}
 async function loadProf(){const d=await db.collection('users').doc(me.uid).get(),u=d.data()||{};const n=u.name||me.displayName||'Moi';
  setAvatar($('pa'),u.photoURL,n[0].toUpperCase());setNameWithBadge($('pn'),n,isBadged(u));
  $('s1').textContent=u.following||0;$('s2').textContent=u.followers||0;$('s3').textContent=u.likes||0;
+ $('s1w').onclick=()=>openFollowList(me.uid,'following');$('s2w').onclick=()=>openFollowList(me.uid,'followers');
  $('pbio').textContent=u.bio||'';
  loadProfGrid('all')}
 $('bioEdit').onclick=async()=>{const cur=$('pbio').textContent;const val=window.prompt('Ta bio (150 caractères max) :',cur);if(val===null)return;const trimmed=val.slice(0,150);
@@ -236,11 +263,11 @@ document.querySelectorAll('.ptabs button').forEach(b=>b.onclick=()=>loadProfGrid
 async function loadProfGrid(type){const box=$('pgrid');box.innerHTML='Chargement…';
  document.querySelectorAll('.ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===type));
  try{let vids=[];
-  if(type==='all'){const vs=await db.collection('videos').where('uid','==',me.uid).limit(60).get();vids=vs.docs.map(d=>d.data())}
+  if(type==='all'){const vs=await db.collection('videos').where('uid','==',me.uid).limit(60).get();vids=vs.docs.map(d=>({id:d.id,...d.data()}))}
   else{const col=type==='saved'?'saves':'likes';const sv=await db.collection(col).where('uid','==',me.uid).limit(60).get();
    const ids=sv.docs.map(d=>d.data().vid);
    const results=await Promise.all(ids.map(id=>db.collection('videos').doc(id).get()));
-   vids=results.filter(d=>d.exists).map(d=>d.data())}
+   vids=results.filter(d=>d.exists).map(d=>({id:d.id,...d.data()}))}
   vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   box.innerHTML='';
   if(!vids.length){box.innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>';return}
@@ -257,12 +284,13 @@ $('pfile').addEventListener('change',async()=>{const f=$('pfile').files[0];if(!f
   toast('Photo mise à jour !');loadProf()
  }catch(e){toast('Erreur envoi photo')}});
 async function loadFeed(){const f=$('feed');
- const [vs,ls,fs,sv]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(20).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get()]);
- myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));f.innerHTML='';
- if(vs.empty){f.innerHTML='<div class="empty">Aucune vidéo pour le moment.<br>Sois le premier : appuie sur +</div>';return}
- const uids=[...new Set(vs.docs.map(d=>d.data().uid))],pm={};
+ const [vs,ls,fs,sv,bl]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(20).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get(),db.collection('blocks').where('from','==',me.uid).get()]);
+ myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));myBlocked=new Set(bl.docs.map(d=>d.data().to));f.innerHTML='';
+ const docs=vs.docs.filter(d=>!myBlocked.has(d.data().uid));
+ if(!docs.length){f.innerHTML='<div class="empty">Aucune vidéo pour le moment.<br>Sois le premier : appuie sur +</div>';return}
+ const uids=[...new Set(docs.map(d=>d.data().uid))],pm={};
  await Promise.all(uids.map(async u=>{try{const d2=await db.collection('users').doc(u).get();pm[u]=d2.data()||null}catch(e){}}));
- vs.forEach(d=>f.appendChild(reel(d.id,d.data(),pm)));
+ docs.forEach(d=>f.appendChild(reel(d.id,{id:d.id,...d.data()},pm)));
  const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');
   if(e.isIntersecting){v.play().catch(()=>{});const vid=e.target.dataset.vid;
    if(vid&&!viewedSet.has(vid)){viewedSet.add(vid);db.collection('videos').doc(vid).update({views:FV.increment(1)}).catch(()=>{})}}
@@ -270,6 +298,7 @@ async function loadFeed(){const f=$('feed');
  f.querySelectorAll('.reel').forEach(r=>io.observe(r))}
 function reel(id,v,pm){const r=document.createElement('div');r.className='reel';r.dataset.vid=id;pm=pm||{};
  r.innerHTML=`<video loop playsinline muted></video>
+<div class="prog"><div class="progfill"></div></div>
 <div class="info"><b></b><span></span><div class="snd">🎵 <span>son original</span></div></div>
 <div class="side">
 ${v.uid!==me.uid?'<div class="folwrap"><div class="avmini"></div><div class="folbadge"></div></div>':''}
@@ -279,9 +308,17 @@ ${v.uid!==me.uid?'<div class="folwrap"><div class="avmini"></div><div class="fol
 <div><button class="sh"></button></div>
 <div class="music">🎵</div>
 </div>`;
- const vd=r.querySelector('video');vd.src=v.url;vd.onclick=()=>{vd.muted=!vd.muted};
+ const vd=r.querySelector('video');vd.src=v.url;vd.style.touchAction='manipulation';
+ const pf=r.querySelector('.progfill');
+ vd.addEventListener('timeupdate',()=>{if(vd.duration)pf.style.width=(vd.currentTime/vd.duration*100)+'%'});
+ let tapTimer=null,lastTapT=0;
+ vd.onclick=()=>{const now=Date.now();
+  if(now-lastTapT<350){clearTimeout(tapTimer);tapTimer=null;lastTapT=0;
+   if(!myLikes.has(id))lb.click();
+   burstHeart(r)}
+  else{lastTapT=now;tapTimer=setTimeout(()=>{vd.muted=!vd.muted;tapTimer=null},300)}};
  const nmB=r.querySelector('.info b');setNameWithBadge(nmB,v.name||'anonyme',isBadged(pm[v.uid]));nmB.onclick=()=>openProfile(v.uid,v.name||'anonyme');
- r.querySelector('.info > span').textContent=v.caption||'';
+ renderCaption(r.querySelector('.info > span'),v.caption||'');
  const fw=r.querySelector('.folwrap');
  if(fw){const am=fw.querySelector('.avmini'),fbd=fw.querySelector('.folbadge');
   setAvatar(am,pm[v.uid]&&pm[v.uid].photoURL,(v.name||'?')[0].toUpperCase());
@@ -304,6 +341,26 @@ ${v.uid!==me.uid?'<div class="folwrap"><div class="avmini"></div><div class="fol
   toast(on?'Retiré des favoris':'Ajouté aux favoris')};
  const shB=r.querySelector('.sh');shB.innerHTML=ICO_SHARE;shB.onclick=()=>shareVideo(v.url,v.caption);
  return r}
+async function openFollowList(uid,type){
+ $('flistTitle').firstChild.textContent=type==='followers'?'Abonnés':'Abonnements';
+ $('flist').classList.add('on');const body=$('flistBody');body.innerHTML='Chargement…';
+ const field=type==='followers'?'to':'from',other=type==='followers'?'from':'to';
+ try{const r=await db.collection('follows').where(field,'==',uid).limit(200).get();
+  const ids=r.docs.map(d=>d.data()[other]);body.innerHTML='';
+  if(!ids.length){body.innerHTML='<div class="empty" style="height:auto;padding:20px 0">'+(type==='followers'?'Aucun abonné pour le moment.':'Ne suit personne pour le moment.')+'</div>';return}
+  const profiles=await Promise.all(ids.map(async id=>{try{const d=await db.collection('users').doc(id).get();return{id,u:d.data()||{}}}catch(e){return{id,u:{}}}}));
+  profiles.forEach(({id,u})=>{const row=document.createElement('div');row.className='sugrow';
+   row.innerHTML='<div class="av2"></div><div style="flex:1;min-width:0"><b></b></div>';
+   setAvatar(row.querySelector('.av2'),u.photoURL,(u.name||'?')[0].toUpperCase());
+   setNameWithBadge(row.querySelector('b'),u.name||'anonyme',isBadged(u));
+   row.onclick=()=>{$('flist').classList.remove('on');openProfile(id,u.name||'anonyme')};
+   if(id!==me.uid){const fb=document.createElement('button');fb.className='sfolbtn';
+    const paint=()=>{const on=myFol.has(id);fb.textContent=on?'Abonné(e)':'Suivre';fb.className=on?'sfolbtn on':'sfolbtn'};paint();
+    fb.onclick=async(e)=>{e.stopPropagation();await toggleFollow(id);paint()};
+    row.appendChild(fb)}
+   body.appendChild(row)})
+ }catch(e){body.innerHTML='<div class="empty" style="height:auto;padding:20px 0">Erreur de chargement.</div>'}}
+$('flistClose').onclick=()=>$('flist').classList.remove('on');
 async function toggleFollow(to){const on=myFol.has(to),d=on?-1:1,ref=db.collection('follows').doc(me.uid+'_'+to),b=db.batch();
  on?myFol.delete(to):myFol.add(to);
  on?b.delete(ref):b.set(ref,{from:me.uid,to:to});b.update(db.collection('users').doc(to),{followers:FV.increment(d)});b.update(db.collection('users').doc(me.uid),{following:FV.increment(d)});
@@ -315,6 +372,7 @@ async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
  try{const [ud,vs]=await Promise.all([db.collection('users').doc(uid).get(),db.collection('videos').where('uid','==',uid).limit(60).get()]);
   const u=ud.data()||{};setAvatar($('ua'),u.photoURL,(name[0]||'?').toUpperCase());setNameWithBadge($('un'),name,isBadged(u));
   $('uf1').textContent=u.following||0;$('uf2').textContent=u.followers||0;$('uf3').textContent=u.likes||0;$('ubio').textContent=u.bio||'';
+  $('uf1w').onclick=()=>openFollowList(uid,'following');$('uf2w').onclick=()=>openFollowList(uid,'followers');
   $('ufol').textContent=myFol.has(uid)?'Abonné(e)':'Suivre';
   $('ufol').onclick=async()=>{const on=await toggleFollow(uid);$('ufol').textContent=on?'Abonné(e)':'Suivre';$('uf2').textContent=Math.max(0,(+$('uf2').textContent)+(on?1:-1))};
   $('umsg').onclick=()=>{$('uprof').classList.remove('on');openChat(uid,name)};
@@ -326,7 +384,7 @@ async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
    ab.onclick=async()=>{const val=isPrem?null:Date.now()+30*24*60*60*1000;
     try{await db.collection('users').doc(uid).update({premiumUntil:val});toast(isPrem?'Badge retiré':'Badge activé pour 1 mois');openProfile(uid,name)}catch(e){toast('Erreur')}};
    adminBox.appendChild(ab)}
-  let vids=vs.docs.map(d=>d.data());vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  let vids=vs.docs.map(d=>({id:d.id,...d.data()}));vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   $('ugrid').innerHTML='';
   vids.forEach(v=>$('ugrid').appendChild(gridTile(v)));
   if(!vids.length)$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>'
@@ -365,6 +423,33 @@ async function refreshInboxBadge(){let n=0,hasAct=false;
  try{const r2=await db.collection('notifications').where('toUid','==',me.uid).limit(50).get();r2.forEach(d=>{if(!d.data().read){n++;hasAct=true}})}catch(e){}
  const bd=$('inboxBadge');if(n>0){bd.textContent=n>9?'9+':n;bd.style.display='flex'}else{bd.style.display='none'}
  $('segActDot').style.display=hasAct?'block':'none'}
+function renderCaption(el,caption){el.textContent='';
+ caption.split(/(#[\p{L}0-9_]+)/gu).forEach(part=>{
+  if(part.startsWith('#')&&part.length>1){const s=document.createElement('span');s.className='htag';s.textContent=part;s.onclick=(e)=>{e.stopPropagation();openHashtag(part.slice(1))};el.appendChild(s)}
+  else if(part)el.appendChild(document.createTextNode(part))})}
+async function openHashtag(tag){$('htitle').textContent='#'+tag;$('hgrid').innerHTML='Chargement…';$('htag').classList.add('on');
+ try{const r=await db.collection('videos').orderBy('createdAt','desc').limit(200).get();
+  const low='#'+tag.toLowerCase();
+  const vids=r.docs.filter(d=>(d.data().caption||'').toLowerCase().includes(low)).map(d=>({id:d.id,...d.data()}));
+  $('hgrid').innerHTML='';
+  if(!vids.length){$('hgrid').innerHTML='<div class="empty" style="height:auto;padding:30px 0">Aucune vidéo avec ce hashtag.</div>';return}
+  vids.forEach(v=>$('hgrid').appendChild(gridTile(v)))
+ }catch(e){$('hgrid').innerHTML='<div class="empty" style="height:auto;padding:30px 0">Erreur de chargement.</div>'}}
+$('hback').onclick=()=>$('htag').classList.remove('on');
+async function openSingleVideo(v){$('vview').classList.add('on');$('vviewBody').innerHTML='Chargement…';
+ $('vdel').style.display=(v.uid===me.uid)?'flex':'none';$('vdel').onclick=()=>deleteVideo(v.id);
+ try{const d=await db.collection('users').doc(v.uid).get();const pm={};pm[v.uid]=d.data()||{};
+  $('vviewBody').innerHTML='';
+  const el=reel(v.id,v,pm);el.style.height='100%';$('vviewBody').appendChild(el);
+  const vd=el.querySelector('video');vd.play().catch(()=>{});
+ }catch(e){$('vviewBody').innerHTML='<div class="empty">Erreur de chargement.</div>'}}
+$('vback').onclick=()=>{$('vview').classList.remove('on');$('vviewBody').innerHTML=''};
+async function deleteVideo(id){if(!window.confirm('Supprimer cette vidéo ? Cette action est définitive.'))return;
+ try{await db.collection('videos').doc(id).delete();toast('Vidéo supprimée');$('vview').classList.remove('on');$('vviewBody').innerHTML='';
+  loadProfGrid('all');loadFeed()}catch(e){toast('Erreur lors de la suppression')}}
+function burstHeart(container){const h=document.createElement('div');h.className='heartburst';
+ h.innerHTML=ICO_HEART_F.replace(/width="\d+" height="\d+"/,'width="100" height="100"');
+ container.appendChild(h);setTimeout(()=>h.remove(),750)}
 function toast(msg){let t=document.getElementById('toastEl');if(!t){t=document.createElement('div');t.id='toastEl';t.style.cssText='position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:30;transition:opacity .3s';document.body.appendChild(t)}
  t.textContent=msg;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',1800)}
 async function shareVideo(url,caption){
@@ -392,15 +477,49 @@ async function sendComment(){const txt=$('cin').value.trim();if(!txt||!curVid)re
 $('csend').onclick=sendComment;$('cin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendComment()}});
 let sqTimer;
 $('sq').oninput=()=>{clearTimeout(sqTimer);sqTimer=setTimeout(doSearch,300)};
-async function doSearch(){const q=$('sq').value.trim().toLowerCase(),box=$('sres');if(!q){box.innerHTML='';return}
+function getRecent(){try{return JSON.parse(localStorage.getItem('novaRecent')||'[]')}catch(e){return[]}}
+function addRecent(uid,name){let r=getRecent().filter(x=>x.uid!==uid);r.unshift({uid,name});r=r.slice(0,8);try{localStorage.setItem('novaRecent',JSON.stringify(r))}catch(e){}}
+function removeRecent(uid){const r=getRecent().filter(x=>x.uid!==uid);try{localStorage.setItem('novaRecent',JSON.stringify(r))}catch(e){}renderSearchDefault()}
+async function renderSearchDefault(){const box=$('sdefault');box.innerHTML='';
+ const recent=getRecent();
+ if(recent.length){const h=document.createElement('div');h.className='isec';h.style.padding='4px 0 6px';h.style.display='flex';h.style.justifyContent='space-between';h.style.alignItems='center';
+  h.innerHTML='<span>Recherches récentes</span>';
+  const clr=document.createElement('button');clr.textContent='Tout effacer';clr.style.cssText='background:none;border:0;color:var(--a);font-size:12px;font-weight:600';
+  clr.onclick=()=>{try{localStorage.removeItem('novaRecent')}catch(e){}renderSearchDefault()};h.appendChild(clr);box.appendChild(h);
+  recent.forEach(rc=>{const wrap=document.createElement('div');wrap.className='recRow';
+   const row=document.createElement('div');row.className='crow';row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b></div>';
+   row.querySelector('.av2').textContent=(rc.name||'?')[0].toUpperCase();row.querySelector('b').textContent='@'+(rc.name||'anonyme');
+   row.onclick=()=>openProfile(rc.uid,rc.name||'anonyme');
+   const x=document.createElement('button');x.className='recX';x.textContent='✕';x.onclick=(e)=>{e.stopPropagation();removeRecent(rc.uid)};
+   wrap.appendChild(row);wrap.appendChild(x);box.appendChild(wrap)})}
+ const h2=document.createElement('div');h2.className='isec';h2.style.padding='10px 0 6px';h2.textContent='Suggestions pour toi';box.appendChild(h2);
+ const sg=document.createElement('div');sg.textContent='Chargement…';sg.style.cssText='color:var(--m);font-size:13px;padding:6px 0';box.appendChild(sg);
+ try{const r=await db.collection('users').limit(40).get();sg.remove();
+  let shown=0;
+  r.forEach(d=>{if(shown>=12)return;if(d.id===me.uid||myFol.has(d.id)||myBlocked.has(d.id))return;const u=d.data();
+   const row=document.createElement('div');row.className='sugrow';
+   row.innerHTML='<div class="av2"></div><div style="flex:1;min-width:0"><b></b><span></span></div>';
+   setAvatar(row.querySelector('.av2'),u.photoURL,(u.name||'?')[0].toUpperCase());
+   setNameWithBadge(row.querySelector('b'),u.name||'anonyme',isBadged(u));
+   row.querySelector('span').textContent=(u.followers||0)+' abonné(e)s';
+   row.onclick=()=>openProfile(d.id,u.name||'anonyme');
+   const fb=document.createElement('button');fb.className='sfolbtn';
+   const paint=()=>{const on=myFol.has(d.id);fb.textContent=on?'Abonné(e)':'Suivre';fb.className=on?'sfolbtn on':'sfolbtn'};paint();
+   fb.onclick=async(e)=>{e.stopPropagation();await toggleFollow(d.id);paint()};
+   row.appendChild(fb);box.appendChild(row);shown++});
+  if(!shown){const em=document.createElement('div');em.className='empty';em.style.cssText='height:auto;padding:16px 0';em.textContent='Pas encore de suggestions.';box.appendChild(em)}
+ }catch(e){sg.textContent='Erreur de chargement.'}}
+async function doSearch(){const q=$('sq').value.trim().toLowerCase(),box=$('sres');
+ if(!q){box.innerHTML='';$('sdefault').style.display='block';renderSearchDefault();return}
+ $('sdefault').style.display='none';
  try{const r=await db.collection('users').limit(300).get();
   box.innerHTML='';
-  r.forEach(d=>{if(d.id===me.uid)return;const u=d.data(),name=(u.name||'').toLowerCase();if(!name.includes(q))return;
+  r.forEach(d=>{if(d.id===me.uid||myBlocked.has(d.id))return;const u=d.data(),name=(u.name||'').toLowerCase();if(!name.includes(q))return;
    const row=document.createElement('div');row.className='crow';
    row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b></div>';
    setAvatar(row.querySelector('.av2'),u.photoURL,(u.name||'?')[0].toUpperCase());
    setNameWithBadge(row.querySelector('b'),u.name||'anonyme',isBadged(u));
-   row.onclick=()=>openProfile(d.id,u.name||'anonyme');
+   row.onclick=()=>{addRecent(d.id,u.name||'anonyme');openProfile(d.id,u.name||'anonyme')};
    box.appendChild(row)})
   if(!box.innerHTML)box.innerHTML='<div class="empty" style="height:auto;padding:16px 4px">Aucun résultat pour "'+q+'".</div>'
  }catch(e){box.innerHTML='<div class="empty">Erreur de recherche.</div>'}}
