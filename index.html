@@ -93,20 +93,31 @@ nav button{position:relative}
 .crow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--l)}
 .av2{flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;overflow:hidden}
 .av2 img{width:100%;height:100%;object-fit:cover}
-.crow b{display:block;font-size:15px}.crow .lm{color:var(--m);font-size:12px;margin-top:2px}
+.crow{position:relative}
+.crow b{display:block;font-size:15px}.crow .lm{color:var(--m);font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.crow .ctime{color:var(--m);font-size:11px;flex:0 0 auto}
+.crow .udot{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b))}
 #sres{margin-bottom:6px}
 #thread{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
 #thread.on{display:flex}
-.thead{display:flex;align-items:center;gap:12px;padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0));border-bottom:1px solid var(--l)}
+.thead{display:flex;align-items:center;gap:11px;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top,0));border-bottom:1px solid var(--l)}
 .thead button{background:none;border:0;color:var(--t);font-size:22px;padding:0}
-.thead b{font-size:16px}
-#tmsgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
-.bub{max-width:75%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.35;word-break:break-word}
-.bub.me{align-self:flex-end;background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border-bottom-right-radius:4px}
-.bub.you{align-self:flex-start;background:var(--s);border-bottom-left-radius:4px}
-.tinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0))}
+.thead .tinfo{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer}
+.thead b{font-size:15.5px;display:block;line-height:1.25}
+.thead .tstatus{font-size:11.5px;color:var(--m);line-height:1.2}
+.thead .tstatus.typing{color:var(--a)}
+#tmsgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:3px;background:var(--bg)}
+.brow{display:flex;flex-direction:column;max-width:78%}
+.brow.me{align-self:flex-end;align-items:flex-end}
+.brow.you{align-self:flex-start;align-items:flex-start}
+.brow+.brow{margin-top:7px}
+.bub{padding:9px 13px;border-radius:16px;font-size:14.5px;line-height:1.35;word-break:break-word}
+.bub.me{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border-bottom-right-radius:4px}
+.bub.you{background:var(--s);border-bottom-left-radius:4px}
+.btime{font-size:10.5px;color:var(--m);margin-top:3px;padding:0 3px;display:flex;align-items:center;gap:4px}
+.tinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0));align-items:center}
 .tinput input{flex:1}
-.tinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:42px;height:42px;font-size:16px;flex:0 0 42px}
+.tinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:42px;height:42px;font-size:16px;flex:0 0 42px;display:flex;align-items:center;justify-content:center}
 #uprof{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
 #uprof.on{display:flex}
 #ubody{flex:1;overflow:auto;padding:24px 20px;text-align:center}
@@ -144,7 +155,7 @@ nav button{position:relative}
 <div id="up"><div><b>Nouvelle vidéo</b><input type="file" id="fl" accept="video/*"><input id="cp" placeholder="Légende..." maxlength="150">
 <div id="pg"></div><button class="btn" id="pub">Publier</button><button class="out" id="cx">Annuler</button></div></div>
 
-<div id="thread"><div class="thead"><button id="tback">←</button><b id="tname"></b></div>
+<div id="thread"><div class="thead"><button id="tback">←</button><div class="tinfo" id="tinfo"><div class="av2" id="tav" style="flex:0 0 38px;width:38px;height:38px;font-size:14px"></div><div><b id="tname"></b><div class="tstatus" id="tstatus"></div></div></div></div>
 <div id="tmsgs"></div>
 <div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tsend">➤</button></div></div>
 
@@ -357,42 +368,80 @@ async function doSearch(){const q=$('sq').value.trim().toLowerCase(),box=$('sres
    row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b></div>';
    setAvatar(row.querySelector('.av2'),u.photoURL,(u.name||'?')[0].toUpperCase());
    setNameWithBadge(row.querySelector('b'),u.name||'anonyme',isBadged(u));
-   row.onclick=()=>openChat(d.id,u.name||'anonyme');
+   row.onclick=()=>openProfile(d.id,u.name||'anonyme');
    box.appendChild(row)})
+  if(!box.innerHTML)box.innerHTML='<div class="empty" style="height:auto;padding:16px 4px">Aucun résultat pour "'+q+'".</div>'
  }catch(e){box.innerHTML='<div class="empty">Erreur de recherche.</div>'}}
+function fmtChatTime(ts){if(!ts)return'';const d=new Date(ts),now=new Date();
+ if(d.toDateString()===now.toDateString())return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+ const y=new Date(now);y.setDate(now.getDate()-1);if(d.toDateString()===y.toDateString())return'Hier';
+ return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')}
 async function loadChats(){const box=$('clist');box.innerHTML='Chargement…';
  try{const r=await db.collection('chats').where('participants','array-contains',me.uid).get();
   let docs=r.docs.map(d=>({id:d.id,...d.data()}));docs.sort((a,b)=>(b.lastAt||0)-(a.lastAt||0));
   box.innerHTML='';
   if(!docs.length){box.innerHTML='<div class="empty">Aucune conversation.<br>Cherche quelqu\'un ci-dessus pour commencer.</div>';return}
-  docs.forEach(c=>{const otherUid=c.participants.find(p=>p!==me.uid),otherName=(c.names&&c.names[otherUid])||'anonyme',row=document.createElement('div');row.className='crow';
-   row.innerHTML='<div class="av2"></div><div style="flex:1"><b></b><div class="lm"></div></div>';
-   row.querySelector('.av2').textContent=otherName[0].toUpperCase();
-   row.querySelector('b').textContent='@'+otherName;
-   row.querySelector('.lm').textContent=c.lastMsg||'';
+  const uids=[...new Set(docs.map(c=>c.participants.find(p=>p!==me.uid)))];
+  const profiles={};await Promise.all(uids.map(async uid=>{try{const d=await db.collection('users').doc(uid).get();profiles[uid]=d.data()||{}}catch(e){profiles[uid]={}}}));
+  docs.forEach(c=>{const otherUid=c.participants.find(p=>p!==me.uid),otherName=(c.names&&c.names[otherUid])||'anonyme',u=profiles[otherUid]||{};
+   const readAt=c['read_'+me.uid]||0,unread=(c.lastAt||0)>readAt&&c.lastFrom&&c.lastFrom!==me.uid;
+   const row=document.createElement('div');row.className='crow';
+   row.innerHTML='<div class="av2"></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><b></b><span class="ctime"></span></div><div class="lm"></div></div>'+(unread?'<span class="udot"></span>':'');
+   setAvatar(row.querySelector('.av2'),u.photoURL,otherName[0].toUpperCase());
+   setNameWithBadge(row.querySelector('b'),otherName,isBadged(u));
+   row.querySelector('.ctime').textContent=fmtChatTime(c.lastAt);
+   const lm=row.querySelector('.lm');lm.textContent=(c.lastFrom===me.uid?'Vous: ':'')+(c.lastMsg||'Démarrer la conversation');
+   if(unread){row.style.fontWeight='600';lm.style.color='var(--t)';lm.style.fontWeight='600'}
    row.onclick=()=>openChat(otherUid,otherName);
    box.appendChild(row)})
  }catch(e){box.innerHTML='<div class="empty">Erreur de chargement.</div>'}}
-let curChat=null,curUnsub=null;
-async function openChat(otherUid,otherName){const chatId=[me.uid,otherUid].sort().join('_');curChat=chatId;
+let curChat=null,curUnsub=null,curDocUnsub=null,curOtherUid=null,curOtherName=null,lastMsgDocs=[],typingTimer=null;
+function fmtBubbleTime(ts){if(!ts)return'';const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
+const SEEN_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 13l5 5L15 8"/><path d="M9 13l5 5L23 8"/></svg>';
+const SENT_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>';
+function renderThread(qs,otherReadAt){
+ const box=$('tmsgs');box.innerHTML='';let lastFrom=null;
+ const docs=qs.docs;
+ docs.forEach((d,i)=>{const m=d.data();
+  const row=document.createElement('div');row.className='brow '+(m.from===me.uid?'me':'you');
+  const b=document.createElement('div');b.className='bub '+(m.from===me.uid?'me':'you');b.textContent=m.text;row.appendChild(b);
+  const isLast=i===docs.length-1,isLastMine=m.from===me.uid&&!docs.slice(i+1).some(dd=>dd.data().from===me.uid);
+  const tEl=document.createElement('div');tEl.className='btime';
+  let html=fmtBubbleTime(m.createdAt);
+  if(m.from===me.uid&&isLastMine){html+=' <span style="display:inline-flex">'+((otherReadAt||0)>=(m.createdAt||0)?SEEN_SVG:SENT_SVG)+'</span>'}
+  tEl.innerHTML=html;row.appendChild(tEl);
+  box.appendChild(row)});
+ box.scrollTop=box.scrollHeight}
+async function openChat(otherUid,otherName){const chatId=[me.uid,otherUid].sort().join('_');curChat=chatId;curOtherUid=otherUid;curOtherName=otherName;
  const ref=db.collection('chats').doc(chatId);
+ $('tname').textContent='@'+otherName;$('tstatus').textContent='';$('tstatus').className='tstatus';
+ $('tav').textContent=otherName[0].toUpperCase();
+ db.collection('users').doc(otherUid).get().then(d=>{const u=d.data()||{};setAvatar($('tav'),u.photoURL,otherName[0].toUpperCase());setNameWithBadge($('tname'),otherName,isBadged(u))}).catch(()=>{});
+ $('tinfo').onclick=()=>{if(curUnsub)curUnsub();if(curDocUnsub)curDocUnsub();curUnsub=null;curDocUnsub=null;curChat=null;$('thread').classList.remove('on');openProfile(otherUid,otherName)};
+ $('thread').classList.add('on');$('tmsgs').innerHTML='Chargement…';
  try{const snap=await ref.get();
   if(!snap.exists){const myName=me.displayName||'Moi',names={};names[me.uid]=myName;names[otherUid]=otherName;
    await ref.set({participants:[me.uid,otherUid].sort(),names:names,lastMsg:'',lastAt:Date.now()})}
   const upd={};upd['read_'+me.uid]=Date.now();ref.update(upd).then(refreshInboxBadge).catch(()=>{});
  }catch(e){}
- $('tname').textContent='@'+otherName;$('thread').classList.add('on');$('tmsgs').innerHTML='';
- if(curUnsub)curUnsub();
+ if(curUnsub)curUnsub();if(curDocUnsub)curDocUnsub();
+ let otherReadAt=0,typingOther=false;
+ curDocUnsub=ref.onSnapshot(d=>{const c=d.data()||{};otherReadAt=c['read_'+otherUid]||0;
+  const typingAt=c['typing_'+otherUid]||0;typingOther=(Date.now()-typingAt)<4000;
+  $('tstatus').textContent=typingOther?'en train d\'écrire…':'';
+  $('tstatus').className='tstatus'+(typingOther?' typing':'');
+  if(lastMsgDocs.length)renderThread({docs:lastMsgDocs},otherReadAt)});
  curUnsub=ref.collection('messages').orderBy('createdAt').onSnapshot(qs=>{
-  const box=$('tmsgs');box.innerHTML='';
-  qs.forEach(d=>{const m=d.data(),b=document.createElement('div');b.className='bub '+(m.from===me.uid?'me':'you');b.textContent=m.text;box.appendChild(b)});
-  box.scrollTop=box.scrollHeight
+  lastMsgDocs=qs.docs;renderThread(qs,otherReadAt);
+  const upd={};upd['read_'+me.uid]=Date.now();ref.update(upd).then(refreshInboxBadge).catch(()=>{})
  },e=>{$('tmsgs').innerHTML='<div class="empty">Erreur de chargement.</div>'})}
-$('tback').onclick=()=>{$('thread').classList.remove('on');if(curUnsub){curUnsub();curUnsub=null}curChat=null;loadChats()};
+$('tback').onclick=()=>{$('thread').classList.remove('on');if(curUnsub){curUnsub();curUnsub=null}if(curDocUnsub){curDocUnsub();curDocUnsub=null}curChat=null;lastMsgDocs=[];loadChats()};
 async function sendMsg(){const txt=$('tin').value.trim();if(!txt||!curChat)return;$('tin').value='';
  const ref=db.collection('chats').doc(curChat);
+ const upd={};upd['typing_'+me.uid]=0;ref.update(upd).catch(()=>{});
  try{await ref.collection('messages').add({from:me.uid,text:txt,createdAt:Date.now()});await ref.update({lastMsg:txt,lastAt:Date.now(),lastFrom:me.uid})}catch(e){console.error(e)}}
-
+$('tin').addEventListener('input',()=>{if(!curChat)return;const ref=db.collection('chats').doc(curChat);const upd={};upd['typing_'+me.uid]=Date.now();ref.update(upd).catch(()=>{});
+ clearTimeout(typingTimer);typingTimer=setTimeout(()=>{const u2={};u2['typing_'+me.uid]=0;ref.update(u2).catch(()=>{})},3000)});
 $('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
 $('pl').onclick=()=>{$('fl').click()};
 $('fl').addEventListener('change',()=>{if($('fl').files[0])$('up').style.display='flex'});
