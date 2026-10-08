@@ -35,8 +35,9 @@ main{flex:1;position:relative;overflow:hidden}
 .prog{position:absolute;left:0;right:0;bottom:0;height:2.5px;background:rgba(255,255,255,.25);z-index:3}
 .progfill{height:100%;width:0;background:#fff}
 .htag{color:#6fb3ff;font-weight:600}
-#htag,#vview,#settings{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
-#htag.on,#vview.on,#settings.on{display:flex}
+.skel{background:linear-gradient(100deg,var(--s) 30%,var(--l) 50%,var(--s) 70%);background-size:200% 100%;animation:shimmer 1.3s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
 .menubtn{position:absolute;top:calc(14px + env(safe-area-inset-top,0));right:14px;background:none;border:0;color:var(--t);font-size:22px;z-index:2;line-height:1}
 .setrow{width:100%;text-align:left;background:var(--s);border:0;border-radius:10px;padding:14px;font-size:14.5px;color:var(--t);margin-bottom:8px;display:block}
 .setrow input[type=checkbox]{width:40px;height:22px}
@@ -56,9 +57,15 @@ main{flex:1;position:relative;overflow:hidden}
 #ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;gap:10px;pointer-events:none;z-index:5}
 #ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px;position:relative;display:flex;align-items:center;justify-content:center}
 .ndot{display:none;position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--b);border:1.5px solid rgba(0,0,0,.35)}
-#cmts,#notifs,#flist,#umenu{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
-#cmts.on,#notifs.on,#flist.on,#umenu.on{display:flex}
-#cmts>div,#notifs>div,#flist>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
+#cmts,#notifs,#flist,#umenu,#miniView{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
+#cmts.on,#notifs.on,#flist.on,#umenu.on,#miniView.on{display:flex}
+#cmts>div,#notifs>div,#flist>div,#miniView>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
+.statbox{background:var(--s);border-radius:12px;padding:16px;margin-bottom:10px}
+.statbox b{display:block;font-size:24px}
+.statbox span{color:var(--m);font-size:12.5px}
+.formrow{margin-bottom:12px}
+.formrow label{display:block;font-size:12.5px;color:var(--m);margin-bottom:5px}
+.formrow input,.formrow select,.formrow textarea{width:100%;background:var(--s);border:1px solid var(--l);border-radius:9px;padding:11px;color:var(--t);font-size:14px;font-family:inherit}
 #umenu{z-index:12}
 #umenu>div{background:var(--s);width:100%;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom,0)}
 .msheetbtn{width:100%;background:none;border:0;border-bottom:1px solid var(--l);padding:16px;font-size:15px;color:var(--t);text-align:center}
@@ -136,8 +143,8 @@ nav button{position:relative}
 .crow .ctime{color:var(--m);font-size:11px;flex:0 0 auto}
 .crow .udot{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b))}
 #sres{margin-bottom:6px}
-#thread{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
-#thread.on{display:flex}
+.ovl{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:10;transform:translateX(100%);transition:transform .22s ease;pointer-events:none}
+.ovl.on{transform:translateX(0);pointer-events:auto}
 .thead{display:flex;align-items:center;gap:11px;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top,0));border-bottom:1px solid var(--l)}
 .thead button{background:none;border:0;color:var(--t);font-size:22px;padding:0}
 .thead .tinfo{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer}
@@ -156,8 +163,7 @@ nav button{position:relative}
 .tinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0));align-items:center}
 .tinput input{flex:1}
 .tinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:42px;height:42px;font-size:16px;flex:0 0 42px;display:flex;align-items:center;justify-content:center}
-#uprof{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:10}
-#uprof.on{display:flex}
+
 #ubody{flex:1;overflow:auto;padding:24px 20px;text-align:center}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:14px}
 .vtile{aspect-ratio:9/16;background:#000;position:relative;overflow:hidden;border-radius:4px}
@@ -196,7 +202,7 @@ nav button{position:relative}
 <div id="up"><div><b>Nouvelle vidéo</b><input type="file" id="fl" accept="video/*"><input id="cp" placeholder="Légende..." maxlength="150">
 <div id="pg"></div><button class="btn" id="pub">Publier</button><button class="out" id="cx">Annuler</button></div></div>
 
-<div id="thread"><div class="thead"><button id="tback">←</button><div class="tinfo" id="tinfo"><div class="av2" id="tav" style="flex:0 0 38px;width:38px;height:38px;font-size:14px"></div><div><b id="tname"></b><div class="tstatus" id="tstatus"></div></div></div></div>
+<div id="thread" class="ovl"><div class="thead"><button id="tback">←</button><div class="tinfo" id="tinfo"><div class="av2" id="tav" style="flex:0 0 38px;width:38px;height:38px;font-size:14px"></div><div><b id="tname"></b><div class="tstatus" id="tstatus"></div></div></div></div>
 <div id="tmsgs"></div>
 <div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tsend">➤</button></div></div>
 
@@ -207,26 +213,39 @@ nav button{position:relative}
 <div id="flist"><div><div class="cmthead" id="flistTitle">Abonnés<button id="flistClose">✕</button></div>
 <div id="flistBody" style="overflow-y:auto;padding:4px 14px 20px"></div></div></div>
 
-<div id="htag"><div class="thead"><button id="hback">←</button><b id="htitle">#tag</b></div><div id="hgrid" class="grid"></div></div>
+<div id="htag" class="ovl"><div class="thead"><button id="hback">←</button><b id="htitle">#tag</b></div><div id="hgrid" class="grid"></div></div>
 
-<div id="vview"><div class="thead"><button id="vback">←</button><div style="flex:1"></div><button id="vdel" style="display:none"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button></div><div id="vviewBody"></div></div>
+<div id="vview" class="ovl"><div class="thead"><button id="vback">←</button><div style="flex:1"></div><button id="vdel" style="display:none"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button></div><div id="vviewBody"></div></div>
 
 <div id="umenu"><div><button id="umReport" class="msheetbtn">Signaler ce compte</button><button id="umBlock" class="msheetbtn">Bloquer ce compte</button><button id="umCancel" class="msheetbtn" style="color:var(--m)">Annuler</button></div></div>
 
-<div id="settings"><div class="thead"><button id="setBack">←</button><b>Paramètres</b></div>
+<div id="settings" class="ovl"><div class="thead"><button id="setBack">←</button><b>Paramètres</b></div>
 <div style="padding:14px;overflow-y:auto">
 <div class="isec" style="padding:4px 0 8px">Compte</div>
 <button class="setrow" id="setEditName">Modifier le nom</button>
 <button class="setrow" id="setEditBio">Modifier la bio</button>
-<div class="isec" style="padding:16px 0 8px">Confidentialité</div>
+<button class="setrow" id="setPwd">Changer le mot de passe</button>
+<button class="setrow" id="setVerif">✓ Demander le badge vérifié</button>
+<div class="isec" style="padding:16px 0 8px">Comptes</div>
+<div id="acctList"></div>
+<button class="setrow" id="setAddAcct">+ Ajouter / changer de compte</button>
+<div class="isec" style="padding:16px 0 8px">Confidentialité & sécurité</div>
 <div class="setrow" style="display:flex;justify-content:space-between;align-items:center"><span>Compte privé</span><input type="checkbox" id="setPrivate"></div>
 <button class="setrow" id="setBlocked">Comptes bloqués</button>
+<button class="setrow" id="setSessions">Historique de connexion</button>
+<div class="isec" style="padding:16px 0 8px">Statistiques</div>
+<button class="setrow" id="setStats">📊 Voir mes statistiques</button>
+<div class="isec" style="padding:16px 0 8px">Application</div>
+<button class="setrow" id="setCache">Vider le cache local</button>
 <div class="isec" style="padding:16px 0 8px">À propos</div>
-<div class="setrow" style="color:var(--m);font-size:13px;line-height:1.5">Nova Chat — version bêta.<br>Le portefeuille, la vérification officielle et les lives arrivent dans une prochaine mise à jour.</div>
+<div class="setrow" style="color:var(--m);font-size:13px;line-height:1.5">Nova Chat — version bêta.<br>Le portefeuille, les sons réutilisables, la caméra intégrée et les duos arrivent dans une prochaine mise à jour.</div>
 <button class="out" id="setLogout" style="margin-top:20px;width:100%">Se déconnecter</button>
 </div></div>
 
-<div id="uprof"><div class="thead"><button id="uback">←</button><b>Profil</b><div style="flex:1"></div><button id="umore">⋯</button></div>
+<div id="miniView"><div><div class="cmthead" id="miniTitle">Titre<button id="miniClose">✕</button></div>
+<div id="miniBody" style="overflow-y:auto;padding:4px 14px 20px"></div></div></div>
+
+<div id="uprof" class="ovl"><div class="thead"><button id="uback">←</button><b>Profil</b><div style="flex:1"></div><button id="umore">⋯</button></div>
 <div id="ubody"><div class="av" id="ua"></div><h2 id="un" style="margin:0"></h2>
 <div class="stats"><div class="tap" id="uf1w"><b id="uf1">0</b><span>Abonnements</span></div><div class="tap" id="uf2w"><b id="uf2">0</b><span>Abonnés</span></div><div><b id="uf3">0</b><span>J'aime</span></div></div>
 <p class="bio" id="ubio"></p>
@@ -259,9 +278,20 @@ $('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,nm=$('n
  if(!em||!pw||(signup&&!nm)){$('err').textContent='Remplis tous les champs.';return}
  try{if(signup){ready=(async()=>{const c=await auth.createUserWithEmailAndPassword(em,pw);await c.user.updateProfile({displayName:nm});await db.collection('users').doc(c.user.uid).set({name:nm,nameLower:nm.toLowerCase(),email:em,followers:0,following:0,likes:0})})();await ready}
  else await auth.signInWithEmailAndPassword(em,pw)}catch(e){$('err').textContent=E[e.code]||('Erreur: '+(e.code||e.message))}};
+function getAccounts(){try{return JSON.parse(localStorage.getItem('novaAccounts')||'[]')}catch(e){return[]}}
+function saveAccount(email,name){let a=getAccounts().filter(x=>x.email!==email);a.unshift({email,name});a=a.slice(0,5);try{localStorage.setItem('novaAccounts',JSON.stringify(a))}catch(e){}}
+function renderAcctList(){const box=$('acctList');if(!box)return;box.innerHTML='';
+ getAccounts().forEach(a=>{const cur=me&&me.email===a.email,row=document.createElement('div');row.className='setrow';
+  row.style.cssText+=';display:flex;justify-content:space-between;align-items:center;'+(cur?'':'cursor:pointer');
+  row.innerHTML='<span>'+(a.name?('@'+a.name+' · '):'')+a.email+'</span><span style="color:var(--a);font-size:12px;flex:0 0 auto;margin-left:8px">'+(cur?'Actif':'Changer')+'</span>';
+  if(!cur)row.onclick=()=>{$('settings').classList.remove('on');auth.signOut().then(()=>{$('em').value=a.email;$('pw').value='';$('pw').focus();toast('Connecte-toi à ce compte')})};
+  box.appendChild(row)})}
 auth.onAuthStateChanged(async u=>{me=u;$('splash').style.display='none';if(!u){$('auth').style.display='flex';$('app').style.display='none';return}
  try{await ready}catch(e){}
  try{const d=await db.collection('users').doc(u.uid).get();if(d.exists&&!d.data().email)await db.collection('users').doc(u.uid).update({email:u.email})}catch(e){}
+ saveAccount(u.email,u.displayName||'');
+ if(!sessionStorage.getItem('novaSessionLogged')){sessionStorage.setItem('novaSessionLogged','1');
+  db.collection('users').doc(u.uid).collection('sessions').add({ua:navigator.userAgent,at:Date.now()}).catch(()=>{})}
  $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf();refreshInboxBadge()});
 $('lo').onclick=()=>auth.signOut();
 function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('inbox').classList.toggle('on',k==4);
@@ -284,7 +314,7 @@ async function loadProf(){const d=await db.collection('users').doc(me.uid).get()
 $('bioEdit').onclick=async()=>{const cur=$('pbio').textContent;const val=window.prompt('Ta bio (150 caractères max) :',cur);if(val===null)return;const trimmed=val.slice(0,150);
  try{await db.collection('users').doc(me.uid).update({bio:trimmed});$('pbio').textContent=trimmed}catch(e){toast('Erreur')}};
 document.querySelectorAll('.ptabs button').forEach(b=>b.onclick=()=>loadProfGrid(b.dataset.t));
-async function loadProfGrid(type){const box=$('pgrid');box.innerHTML='Chargement…';
+async function loadProfGrid(type){const box=$('pgrid');skeletonGrid(box,9);
  document.querySelectorAll('.ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===type));
  try{let vids=[];
   if(type==='all'){const vs=await db.collection('videos').where('uid','==',me.uid).limit(60).get();vids=vs.docs.map(d=>({id:d.id,...d.data()}))}
@@ -393,7 +423,7 @@ async function toggleFollow(to){const on=myFol.has(to),d=on?-1:1,ref=db.collecti
 let curProfileUid=null,curProfileName=null;
 async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
  curProfileUid=uid;curProfileName=name;
- $('ua').textContent=(name[0]||'?').toUpperCase();$('ugrid').innerHTML='';$('uact').style.display='flex';
+ $('ua').textContent=(name[0]||'?').toUpperCase();skeletonGrid($('ugrid'),9);$('uact').style.display='flex';
  $('uprof').classList.add('on');
  try{const [ud,vs]=await Promise.all([db.collection('users').doc(uid).get(),db.collection('videos').where('uid','==',uid).limit(60).get()]);
   const u=ud.data()||{};setAvatar($('ua'),u.photoURL,(name[0]||'?').toUpperCase());setNameWithBadge($('un'),name,isBadged(u));
@@ -410,10 +440,11 @@ async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
    ab.onclick=async()=>{const val=isPrem?null:Date.now()+30*24*60*60*1000;
     try{await db.collection('users').doc(uid).update({premiumUntil:val});toast(isPrem?'Badge retiré':'Badge activé pour 1 mois');openProfile(uid,name)}catch(e){toast('Erreur')}};
    adminBox.appendChild(ab)}
-  let vids=vs.docs.map(d=>({id:d.id,...d.data()}));vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   $('ugrid').innerHTML='';
-  vids.forEach(v=>$('ugrid').appendChild(gridTile(v)));
-  if(!vids.length)$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>'
+  if(u.isPrivate&&!myFol.has(uid)){$('ugrid').innerHTML='<div class="empty" style="grid-column:1/-1;height:auto;padding:40px 16px">🔒<br>Ce compte est privé.<br>Abonne-toi pour voir ses publications.</div>'}
+  else{let vids=vs.docs.map(d=>({id:d.id,...d.data()}));vids.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+   vids.forEach(v=>$('ugrid').appendChild(gridTile(v)));
+   if(!vids.length)$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>'}
  }catch(e){$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Erreur de chargement: '+(e.code||e.message||'inconnue')+'</div>'}}
 $('uback').onclick=()=>$('uprof').classList.remove('on');
 async function renderNotifsInline(container){container.innerHTML='Chargement…';
@@ -478,8 +509,37 @@ $('umBlock').onclick=async()=>{const uid=curProfileUid,wasBlocked=myBlocked.has(
  try{if(wasBlocked){await db.collection('blocks').doc(me.uid+'_'+uid).delete();myBlocked.delete(uid);toast('Compte débloqué')}
   else{await db.collection('blocks').doc(me.uid+'_'+uid).set({from:me.uid,to:uid,createdAt:Date.now()});myBlocked.add(uid);toast('Compte bloqué');$('uprof').classList.remove('on')}
  }catch(e){toast('Erreur')}};
-$('pmenu').onclick=()=>{$('settings').classList.add('on');db.collection('users').doc(me.uid).get().then(d=>{$('setPrivate').checked=!!(d.data()||{}).isPrivate}).catch(()=>{})};
+function openMini(title){$('miniTitle').firstChild.textContent=title;$('miniBody').innerHTML='Chargement…';$('miniView').classList.add('on');return $('miniBody')}
+$('miniClose').onclick=()=>$('miniView').classList.remove('on');
+$('pmenu').onclick=()=>{$('settings').classList.add('on');renderAcctList();db.collection('users').doc(me.uid).get().then(d=>{$('setPrivate').checked=!!(d.data()||{}).isPrivate}).catch(()=>{})};
 $('setBack').onclick=()=>$('settings').classList.remove('on');
+$('setAddAcct').onclick=()=>{$('settings').classList.remove('on');auth.signOut().then(()=>{$('em').value='';$('pw').value='';toast('Connecte-toi ou crée un nouveau compte')})};
+$('setPwd').onclick=async()=>{const cur=window.prompt('Mot de passe actuel :');if(!cur)return;
+ const np=window.prompt('Nouveau mot de passe (6 caractères min.) :');if(!np||np.length<6){toast('Mot de passe trop court (6 min.)');return}
+ try{const cred=firebase.auth.EmailAuthProvider.credential(me.email,cur);await me.reauthenticateWithCredential(cred);await me.updatePassword(np);toast('Mot de passe mis à jour')}
+ catch(e){toast(e.code==='auth/wrong-password'?'Mot de passe actuel incorrect':'Erreur lors du changement')}};
+$('setVerif').onclick=()=>{const body=openMini('Demande de badge vérifié');
+ body.innerHTML='<div class="formrow"><label>Nom complet ou nom de marque</label><input id="vfName"></div><div class="formrow"><label>Catégorie</label><select id="vfCat"><option>Créateur de contenu</option><option>Artiste / Musicien</option><option>Entreprise / Marque</option><option>Média / Organisation</option><option>Personnalité publique</option><option>Autre</option></select></div><div class="formrow"><label>Lien vers une preuve (site officiel, autre réseau vérifié...)</label><input id="vfLink" placeholder="https://..."></div><button class="setrow" id="vfSend" style="background:linear-gradient(135deg,var(--a),var(--b));color:#fff;text-align:center;font-weight:700">Envoyer la demande</button>';
+ $('vfSend').onclick=async()=>{const nm=$('vfName').value.trim(),cat=$('vfCat').value,lk=$('vfLink').value.trim();if(!nm){toast('Indique ton nom');return}
+  try{await db.collection('verificationRequests').add({uid:me.uid,name:nm,category:cat,link:lk,status:'pending',createdAt:Date.now()});$('miniView').classList.remove('on');toast('Demande envoyée. On te recontacte bientôt !')}
+  catch(e){toast('Erreur lors de l\'envoi')}}};
+$('setSessions').onclick=async()=>{const body=openMini('Historique de connexion');
+ try{const r=await db.collection('users').doc(me.uid).collection('sessions').orderBy('at','desc').limit(10).get();
+  if(r.empty){body.innerHTML='<div class="empty" style="height:auto;padding:16px 0">Aucun historique pour le moment.</div>';return}
+  body.innerHTML='';r.forEach(d=>{const s=d.data(),ua=s.ua||'',dev=/iphone/i.test(ua)?'📱 iPhone':/android/i.test(ua)?'📱 Android':/mac/i.test(ua)?'💻 Mac':'🖥️ Appareil';
+   const row=document.createElement('div');row.className='setrow';row.style.cursor='default';
+   row.innerHTML='<b style="font-weight:600;display:block">'+dev+'</b><span style="color:var(--m);font-size:12px">'+new Date(s.at).toLocaleString('fr-FR')+'</span>';
+   body.appendChild(row)})
+ }catch(e){body.innerHTML='<div class="empty" style="height:auto;padding:16px 0">Erreur de chargement.</div>'}};
+$('setStats').onclick=async()=>{const body=openMini('Mes statistiques');
+ try{const [vs,ud]=await Promise.all([db.collection('videos').where('uid','==',me.uid).get(),db.collection('users').doc(me.uid).get()]);
+  let views=0,likes=0,comments=0,top=null;
+  vs.forEach(d=>{const v=d.data();views+=v.views||0;likes+=v.likes||0;comments+=v.commentsCount||0;if(!top||(v.views||0)>(top.views||0))top={id:d.id,...v}});
+  const u=ud.data()||{};
+  body.innerHTML='<div class="statbox"><b>'+fmtCount(views)+'</b><span>Vues cumulées</span></div><div class="statbox"><b>'+fmtCount(u.followers||0)+'</b><span>Abonnés</span></div><div class="statbox"><b>'+fmtCount(likes)+'</b><span>J\'aime cumulés</span></div><div class="statbox"><b>'+fmtCount(comments)+'</b><span>Commentaires cumulés</span></div><div class="statbox"><b>'+vs.size+'</b><span>Vidéos publiées</span></div>';
+  if(top){const tb=document.createElement('button');tb.className='setrow';tb.style.cssText='text-align:center;color:var(--a);border:1px solid var(--l);background:transparent';tb.textContent='🏆 Vidéo la plus vue : '+fmtCount(top.views||0)+' vues';tb.onclick=()=>{$('miniView').classList.remove('on');openSingleVideo(top)};body.appendChild(tb)}
+ }catch(e){body.innerHTML='<div class="empty" style="height:auto;padding:16px 0">Erreur de chargement.</div>'}};
+$('setCache').onclick=()=>{try{localStorage.removeItem('novaRecent')}catch(e){}toast('Cache local vidé (recherches récentes effacées)')};
 $('setEditName').onclick=async()=>{const cur=($('pn').textContent||'').replace(/^@/,'');const nn=window.prompt('Nouveau nom :',cur);if(!nn||!nn.trim())return;
  try{await db.collection('users').doc(me.uid).update({name:nn.trim(),nameLower:nn.trim().toLowerCase()});toast('Nom mis à jour');loadProf()}catch(e){toast('Erreur')}};
 $('setEditBio').onclick=()=>{$('settings').classList.remove('on');$('bioEdit').click()};
@@ -502,6 +562,10 @@ async function openBlockedList(){$('flistTitle').firstChild.textContent='Comptes
 async function deleteVideo(id){if(!window.confirm('Supprimer cette vidéo ? Cette action est définitive.'))return;
  try{await db.collection('videos').doc(id).delete();toast('Vidéo supprimée');$('vview').classList.remove('on');$('vviewBody').innerHTML='';
   loadProfGrid('all');loadFeed()}catch(e){toast('Erreur lors de la suppression')}}
+function skeletonGrid(container,n){container.innerHTML='';for(let i=0;i<(n||9);i++){const d=document.createElement('div');d.className='vtile skel';container.appendChild(d)}}
+function skeletonRows(container,n){container.innerHTML='';for(let i=0;i<(n||5);i++){const r=document.createElement('div');r.className='crow';
+ r.innerHTML='<div class="av2 skel"></div><div style="flex:1"><div class="skel" style="height:13px;border-radius:4px;margin-bottom:7px;width:55%"></div><div class="skel" style="height:11px;border-radius:4px;width:35%"></div></div>';
+ container.appendChild(r)}}
 function burstHeart(container){const h=document.createElement('div');h.className='heartburst';
  h.innerHTML=ICO_HEART_F.replace(/width="\d+" height="\d+"/,'width="100" height="100"');
  container.appendChild(h);setTimeout(()=>h.remove(),750)}
@@ -582,7 +646,7 @@ function fmtChatTime(ts){if(!ts)return'';const d=new Date(ts),now=new Date();
  if(d.toDateString()===now.toDateString())return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
  const y=new Date(now);y.setDate(now.getDate()-1);if(d.toDateString()===y.toDateString())return'Hier';
  return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')}
-async function loadChats(){const box=$('clist');box.innerHTML='Chargement…';
+async function loadChats(){const box=$('clist');skeletonRows(box,5);
  try{const r=await db.collection('chats').where('participants','array-contains',me.uid).get();
   let docs=r.docs.map(d=>({id:d.id,...d.data()}));docs.sort((a,b)=>(b.lastAt||0)-(a.lastAt||0));
   box.innerHTML='';
