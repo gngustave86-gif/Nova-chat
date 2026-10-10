@@ -16,6 +16,7 @@
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-firestore-compat.js"></script>
 <style>
 :root{--bg:#000000;--s:#121212;--t:#f4f4f6;--m:#8b8b99;--a:#9b1b30;--b:#c2273f;--l:#262626}
+:root[data-theme="light"]{--bg:#ffffff;--s:#f5f5f5;--t:#111111;--m:#5c5c66;--l:#e3e3e6}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--t);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Inter','SF Pro Text',Roboto,sans-serif;overflow:hidden}
 button,input{font:inherit}
 .g{background:linear-gradient(90deg,#7c5cff,#ff5c9a);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -73,6 +74,12 @@ main{flex:1;position:relative;overflow:hidden}
 .setitem .sicon2{width:37px;height:37px;border-radius:50%;background:var(--s);display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 37px}
 .setitem b{flex:1;font-weight:600;font-size:14px}
 .setitem .chev{color:var(--m);font-size:18px}
+.switchrow{display:flex;align-items:center;justify-content:space-between;background:var(--s);border-radius:12px;padding:14px;margin-bottom:16px}
+.switchrow .swleft{display:flex;align-items:center;gap:12px;font-size:14.5px;font-weight:600}
+.swtoggle{position:relative;width:48px;height:28px;flex:0 0 48px;-webkit-appearance:none;appearance:none;background:#767577;border-radius:16px;outline:0;cursor:pointer;transition:background .2s}
+.swtoggle:checked{background:var(--a)}
+.swtoggle::before{content:'';position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#f4f3f4;transition:transform .2s}
+.swtoggle:checked::before{transform:translateX(20px)}
 .setrow input[type=checkbox]{width:40px;height:22px}
 #hgrid{flex:1;overflow-y:auto;padding:4px 14px 20px}
 #vview .thead{position:relative;z-index:6;background:rgba(0,0,0,.3)}
@@ -639,15 +646,20 @@ $('siPrivacy').onclick=async()=>{const body=openMini('Confidentialité & sécuri
  body.innerHTML='<div class="setrow" style="display:flex;justify-content:space-between;align-items:center"><span>Compte privé</span><input type="checkbox" id="pvPrivate"'+(priv?' checked':'')+'></div><button class="setrow" id="pvPwd">Changer le mot de passe</button><button class="setrow" id="pvSessions">Historique de connexion</button><div class="setrow" style="color:var(--m);font-size:12.5px;line-height:1.5">La validation en deux étapes (2FA) par SMS arrivera avec un futur forfait Firebase payant — pas encore disponible.</div>';
  $('pvPrivate').onchange=async()=>{try{await db.collection('users').doc(me.uid).update({isPrivate:$('pvPrivate').checked});toast($('pvPrivate').checked?'Compte en mode privé':'Compte public')}catch(e){toast('Erreur');$('pvPrivate').checked=!$('pvPrivate').checked}};
  $('pvPwd').onclick=()=>$('siPwd').click();$('pvSessions').onclick=openSessions};
+function applyDarkMode(dark){document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+ try{localStorage.setItem('novaDark',dark?'1':'0')}catch(e){}}
+function isDarkMode(){try{return localStorage.getItem('novaDark')!=='0'}catch(e){return true}}
 $('siTheme').onclick=()=>{const body=openMini('Thème & apparence');
  const themes=[['Rouge Bordeaux','#9b1b30','#c2273f'],['Violet','#7c5cff','#9b7bff'],['Bleu','#2f7ff0','#5b9bff'],['Vert','#1f9d55','#35c070']];
- const cur=localStorage.getItem('novaThemeA')||'#9b1b30';
- body.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:14px;padding:6px 0">'+themes.map(t=>'<button class="themeswatch" data-a="'+t[1]+'" data-b="'+t[2]+'" style="background:'+t[1]+(t[1]===cur?';box-shadow:0 0 0 3px var(--t)':'')+'"></button>').join('')+'</div><div style="color:var(--m);font-size:12px;margin-top:10px">Appuie sur une couleur pour l\'appliquer à toute l\'application.</div>';
+ const cur=localStorage.getItem('novaThemeA')||'#9b1b30',dark=isDarkMode();
+ body.innerHTML='<div class="switchrow"><div class="swleft"><span>'+(dark?'🌙':'☀️')+'</span><span>Mode sombre</span></div><input type="checkbox" class="swtoggle" id="dmSwitch"'+(dark?' checked':'')+'></div><div style="color:var(--m);font-size:12.5px;margin:-8px 0 16px">Couleur d\'accent</div><div style="display:flex;flex-wrap:wrap;gap:14px;padding:0 0 6px">'+themes.map(t=>'<button class="themeswatch" data-a="'+t[1]+'" data-b="'+t[2]+'" style="background:'+t[1]+(t[1]===cur?';box-shadow:0 0 0 3px var(--t)':'')+'"></button>').join('')+'</div><div style="color:var(--m);font-size:12px;margin-top:10px">Appuie sur une couleur pour l\'appliquer à toute l\'application.</div>';
+ $('dmSwitch').onchange=()=>applyDarkMode($('dmSwitch').checked);
  document.querySelectorAll('.themeswatch').forEach(b=>b.onclick=()=>{applyTheme(b.dataset.a,b.dataset.b);$('miniView').classList.remove('on')})};
 $('qThemeBtn').onclick=()=>$('siTheme').click();
 function applyTheme(a,b){document.documentElement.style.setProperty('--a',a);document.documentElement.style.setProperty('--b',b);
  try{localStorage.setItem('novaThemeA',a);localStorage.setItem('novaThemeB',b)}catch(e){}toast('Thème appliqué')}
-(function(){try{const a=localStorage.getItem('novaThemeA'),b=localStorage.getItem('novaThemeB');if(a&&b){document.documentElement.style.setProperty('--a',a);document.documentElement.style.setProperty('--b',b)}}catch(e){}})();
+(function(){try{const a=localStorage.getItem('novaThemeA'),b=localStorage.getItem('novaThemeB');if(a&&b){document.documentElement.style.setProperty('--a',a);document.documentElement.style.setProperty('--b',b)}
+ document.documentElement.setAttribute('data-theme',localStorage.getItem('novaDark')==='0'?'light':'dark')}catch(e){}})();
 $('siNotif').onclick=()=>{const body=openMini('Notifications');
  body.innerHTML='<div class="setrow" style="display:flex;justify-content:space-between;align-items:center"><span>J\'aime</span><input type="checkbox" checked></div><div class="setrow" style="display:flex;justify-content:space-between;align-items:center"><span>Commentaires</span><input type="checkbox" checked></div><div class="setrow" style="display:flex;justify-content:space-between;align-items:center"><span>Nouveaux abonnés</span><input type="checkbox" checked></div><div class="setrow" style="display:flex;justify-content:space-between;align-items:center"><span>Messages</span><input type="checkbox" checked></div><div class="setrow" style="color:var(--m);font-size:12.5px;line-height:1.5">Les notifications push (vibration/son quand l\'appli est fermée) ne sont pas encore actives — ces réglages sont pour plus tard.</div>'};
 $('siLang').onclick=()=>{const body=openMini('Langues');
