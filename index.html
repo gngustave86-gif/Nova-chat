@@ -18,7 +18,8 @@
 :root{--bg:#000000;--s:#121212;--t:#f4f4f6;--m:#8b8b99;--a:#9b1b30;--b:#c2273f;--l:#262626}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--t);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Inter','SF Pro Text',Roboto,sans-serif;overflow:hidden}
 button,input{font:inherit}
-.g{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.g{background:linear-gradient(90deg,#7c5cff,#ff5c9a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lk.on{color:#ff0049}.sv.on{color:#ffc107}
 #splash{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:var(--bg)}
 #splash>div{transform:translateY(-10%);display:flex;flex-direction:column;align-items:center}
 #splash .sname{margin-top:16px;font-size:23px;font-weight:700}
@@ -37,6 +38,9 @@ main{flex:1;position:relative;overflow:hidden}
 .prog{position:absolute;left:0;right:0;bottom:0;height:2.5px;background:rgba(255,255,255,.25);z-index:3}
 .progfill{height:100%;width:0;background:#fff}
 .htag{color:#6fb3ff;font-weight:600}
+.chipRow{display:flex;gap:8px;padding:2px 14px 12px}
+.chip{background:var(--s);border:1px solid var(--l);color:var(--m);border-radius:16px;padding:7px 14px;font-size:12.5px;font-weight:600}
+.chip.on{background:var(--a);color:#fff;border-color:var(--a)}
 .skel{background:linear-gradient(100deg,var(--s) 30%,var(--l) 50%,var(--s) 70%);background-size:200% 100%;animation:shimmer 1.3s infinite}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 #studio{background:#000}
@@ -86,9 +90,9 @@ main{flex:1;position:relative;overflow:hidden}
 #ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;gap:10px;pointer-events:none;z-index:5}
 #ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px;position:relative;display:flex;align-items:center;justify-content:center}
 .ndot{display:none;position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--b);border:1.5px solid rgba(0,0,0,.35)}
-#cmts,#notifs,#flist,#umenu,#miniView{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
-#cmts.on,#notifs.on,#flist.on,#umenu.on,#miniView.on{display:flex}
-#cmts>div,#notifs>div,#flist>div,#miniView>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
+#cmts,#notifs,#flist,#umenu,#miniView,#gatesheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
+#cmts.on,#notifs.on,#flist.on,#umenu.on,#miniView.on,#gatesheet.on{display:flex}
+#cmts>div,#notifs>div,#flist>div,#miniView>div,#gatesheet>div{background:var(--bg);width:100%;max-height:75vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
 .statbox{background:var(--s);border-radius:12px;padding:16px;margin-bottom:10px}
 .statbox b{display:block;font-size:24px}
 .statbox span{color:var(--m);font-size:12.5px}
@@ -211,7 +215,7 @@ nav button{position:relative}
 <div id="chats" class="view"><div class="ihead" style="padding-bottom:0">Ami(e)s</div><div class="sbox" style="margin:12px 14px 6px"><span class="sicon"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres" style="padding:0 14px"></div><div id="sdefault" style="padding:0 14px 20px;overflow-y:auto"></div></div>
 <div id="inbox" class="view"><div class="ihead">Messages</div>
 <div class="iseg"><button id="segChats" class="active">Discussions</button><button id="segAct">Activité<span class="segdot" id="segActDot" style="display:none"></span></button></div>
-<div id="inboxChats"><div id="clist" style="padding:0 14px"></div></div>
+<div id="inboxChats"><div class="chipRow"><button class="chip on" data-f="all">Toutes</button><button class="chip" data-f="unread">Non lus</button><button class="chip" data-f="req">Demandes</button></div><div id="clist" style="padding:0 14px"></div></div>
 <div id="inboxAct" style="display:none"><div id="nlistInline" style="padding:0 14px"></div></div></div>
 <div id="prof" class="view"><button id="pmenu" class="menubtn">☰</button><div class="avwrap"><div class="av" id="pa"></div><button id="pchange" class="camBtn"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button><input type="file" id="pfile" accept="image/*" style="display:none"></div><h2 id="pn" style="margin:0"></h2>
 <div class="stats"><div class="tap" id="s1w"><b id="s1">0</b><span>Abonnements</span></div><div class="tap" id="s2w"><b id="s2">0</b><span>Abonnés</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
@@ -231,7 +235,7 @@ nav button{position:relative}
 <input type="file" id="fl" accept="video/*" style="display:none">
 
 <div id="studio" class="ovl" style="background:#000">
-<div class="sthead"><button id="stClose">✕</button><div class="stmodes"><button class="stmode" data-m="story">Story</button><button class="stmode on" data-m="camera">Caméra</button><button class="stmode" data-m="live">Direct</button></div><button id="stFlip">🔄</button></div>
+<div class="sthead"><button id="stClose">✕</button><div class="stmodes"><button class="stmode on" data-m="camera">Caméra</button><button class="stmode" data-m="live">Direct</button></div><button id="stFlip">🔄</button></div>
 <div id="stStage"><video id="stPreview" autoplay playsinline muted></video><div id="stPlaceholder" class="empty"></div><div id="stTimer"></div></div>
 <div class="stbar"><button id="stImport" class="stside">🖼️<span>Importer</span></button><button id="stRec" class="strec"></button><div class="stside" style="width:46px"></div></div>
 </div>
@@ -273,6 +277,8 @@ nav button{position:relative}
 <div id="vview" class="ovl"><div class="thead"><button id="vback">←</button><div style="flex:1"></div><button id="vdel" style="display:none"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button></div><div id="vviewBody"></div></div>
 
 <div id="umenu"><div><button id="umReport" class="msheetbtn">Signaler ce compte</button><button id="umBlock" class="msheetbtn">Bloquer ce compte</button><button id="umCancel" class="msheetbtn" style="color:var(--m)">Annuler</button></div></div>
+
+<div id="gatesheet"><div><div style="text-align:center;padding:26px 24px 12px"><div style="font-size:38px;margin-bottom:10px">🔒</div><b style="font-size:17px;display:block;margin-bottom:6px">Connecte-toi à Nova Chat</b><span style="color:var(--m);font-size:13px;line-height:1.4">Crée un compte gratuit pour aimer, commenter, publier et discuter.</span></div><button class="msheetbtn" id="gateLogin" style="color:var(--a);font-weight:700">Se connecter / Créer un compte</button><button class="msheetbtn" id="gateCancel" style="color:var(--m)">Plus tard</button></div></div>
 
 <div id="settings" class="ovl"><div class="thead"><button id="setBack">←</button><b>Paramètres</b></div>
 <div style="padding:10px 14px 24px;overflow-y:auto">
@@ -347,18 +353,29 @@ function renderAcctList(){const box=$('acctList');if(!box)return;box.innerHTML='
   row.innerHTML='<span>'+(a.name?('@'+a.name+' · '):'')+a.email+'</span><span style="color:var(--a);font-size:12px;flex:0 0 auto;margin-left:8px">'+(cur?'Actif':'Changer')+'</span>';
   if(!cur)row.onclick=()=>{$('settings').classList.remove('on');auth.signOut().then(()=>{$('em').value=a.email;$('pw').value='';$('pw').focus();toast('Connecte-toi à ce compte')})};
   box.appendChild(row)})}
-auth.onAuthStateChanged(async u=>{me=u;$('splash').style.display='none';if(!u){$('auth').style.display='flex';$('app').style.display='none';return}
+let suppressAutoGuest=false;
+function requireAuth(){if(me&&!me.isAnonymous)return true;$('gatesheet').classList.add('on');return false}
+$('gateCancel').onclick=()=>$('gatesheet').classList.remove('on');
+$('gateLogin').onclick=()=>{$('gatesheet').classList.remove('on');suppressAutoGuest=true;auth.signOut()};
+auth.onAuthStateChanged(async u=>{me=u;$('splash').style.display='none';
+ if(!u){
+  if(suppressAutoGuest){suppressAutoGuest=false;$('auth').style.display='flex';$('app').style.display='none';return}
+  try{await auth.signInAnonymously()}catch(e){$('auth').style.display='flex';$('app').style.display='none'}
+  return}
  try{await ready}catch(e){}
- try{const d=await db.collection('users').doc(u.uid).get();if(d.exists&&!d.data().email)await db.collection('users').doc(u.uid).update({email:u.email})}catch(e){}
- saveAccount(u.email,u.displayName||'');
- if(!sessionStorage.getItem('novaSessionLogged')){sessionStorage.setItem('novaSessionLogged','1');
-  db.collection('users').doc(u.uid).collection('sessions').add({ua:navigator.userAgent,at:Date.now()}).catch(()=>{})}
- $('auth').style.display='none';$('app').style.display='flex';await loadFeed();loadProf();refreshInboxBadge();
+ if(!u.isAnonymous){
+  try{const d=await db.collection('users').doc(u.uid).get();if(d.exists&&!d.data().email)await db.collection('users').doc(u.uid).update({email:u.email})}catch(e){}
+  saveAccount(u.email,u.displayName||'');
+  if(!sessionStorage.getItem('novaSessionLogged')){sessionStorage.setItem('novaSessionLogged','1');
+   db.collection('users').doc(u.uid).collection('sessions').add({ua:navigator.userAgent,at:Date.now()}).catch(()=>{})}
+ }
+ $('auth').style.display='none';$('app').style.display='flex';await loadFeed();if(!u.isAnonymous)loadProf();refreshInboxBadge();
  try{const pu=new URLSearchParams(location.search).get('u');if(pu&&pu!==me.uid){const d=await db.collection('users').doc(pu).get();if(d.exists)openProfile(pu,(d.data()||{}).name||'anonyme')}}catch(e){}});
 function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('inbox').classList.toggle('on',k==4);
  $('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);$('n4').classList.toggle('on',k==4);
  $('ftop').style.display=k==1?'flex':'none';if(k==2)loadProf();if(k==4)loadInbox();document.querySelectorAll('video').forEach(v=>v.pause())}
-$('n1').onclick=()=>tab(1);$('n3').onclick=()=>{tab(3);if(!$('sq').value.trim())renderSearchDefault()};$('n2').onclick=()=>tab(2);$('n4').onclick=()=>tab(4);
+$('n1').onclick=()=>tab(1);$('n3').onclick=()=>{tab(3);if(!$('sq').value.trim())renderSearchDefault()};
+$('n2').onclick=()=>{if(!requireAuth())return;tab(2)};$('n4').onclick=()=>{if(!requireAuth())return;tab(4)};
 $('gosearch').onclick=()=>{tab(3);if(!$('sq').value.trim())renderSearchDefault()};
 function fmtCount(n){n=n||0;if(n>=1000000)return (n/1000000).toFixed(1).replace('.',',')+'M';if(n>=1000)return (n/1000).toFixed(1).replace('.',',')+'K';return ''+n}
 function gridTile(v){const t=document.createElement('div');t.className='vtile';
@@ -443,7 +460,7 @@ ${v.uid!==me.uid?'<div class="folwrap"><div class="avmini"></div><div class="fol
   fbd.onclick=async()=>{await toggleFollow(v.uid);paintFol()}}
  const lb=r.querySelector('.lk'),lc=lb.nextElementSibling;let n=v.likes||0;
  const paint=()=>{const on=myLikes.has(id);lb.className=on?'lk on':'lk';lb.innerHTML=on?ICO_HEART_F:ICO_HEART_O;lc.textContent=n};paint();
- lb.onclick=async()=>{const on=myLikes.has(id),d=on?-1:1,ref=db.collection('likes').doc(id+'_'+me.uid),b=db.batch();
+ lb.onclick=async()=>{if(!requireAuth())return;const on=myLikes.has(id),d=on?-1:1,ref=db.collection('likes').doc(id+'_'+me.uid),b=db.batch();
   on?myLikes.delete(id):myLikes.add(id);n+=d;paint();
   on?b.delete(ref):b.set(ref,{vid:id,uid:me.uid});b.update(db.collection('videos').doc(id),{likes:FV.increment(d)});b.update(db.collection('users').doc(v.uid),{likes:FV.increment(d)});
   try{await b.commit();if(!on&&v.uid!==me.uid)db.collection('notifications').add({toUid:v.uid,fromUid:me.uid,fromName:me.displayName||'anonyme',type:'like',vid:id,createdAt:Date.now(),read:false}).catch(()=>{})}catch(e){console.error(e)}};
@@ -451,7 +468,7 @@ ${v.uid!==me.uid?'<div class="folwrap"><div class="avmini"></div><div class="fol
  cm.onclick=()=>openComments(id,cc,v.uid,v.commentsEnabled!==false);
  const sv=r.querySelector('.sv');
  const paintSave=()=>{const on=mySaves.has(id);sv.className=on?'sv on':'sv';sv.innerHTML=on?ICO_SAVE_F:ICO_SAVE_O};paintSave();
- sv.onclick=async()=>{const on=mySaves.has(id),ref=db.collection('saves').doc(id+'_'+me.uid);
+ sv.onclick=async()=>{if(!requireAuth())return;const on=mySaves.has(id),ref=db.collection('saves').doc(id+'_'+me.uid);
   on?mySaves.delete(id):mySaves.add(id);paintSave();
   try{on?await ref.delete():await ref.set({vid:id,uid:me.uid,createdAt:Date.now()})}catch(e){console.error(e)}
   toast(on?'Retiré des favoris':'Ajouté aux favoris')};
@@ -477,14 +494,14 @@ async function openFollowList(uid,type){
    body.appendChild(row)})
  }catch(e){body.innerHTML='<div class="empty" style="height:auto;padding:20px 0">Erreur de chargement.</div>'}}
 $('flistClose').onclick=()=>$('flist').classList.remove('on');
-async function toggleFollow(to){const on=myFol.has(to),d=on?-1:1,ref=db.collection('follows').doc(me.uid+'_'+to),b=db.batch();
+async function toggleFollow(to){if(!requireAuth())return;const on=myFol.has(to),d=on?-1:1,ref=db.collection('follows').doc(me.uid+'_'+to),b=db.batch();
  on?myFol.delete(to):myFol.add(to);
  on?b.delete(ref):b.set(ref,{from:me.uid,to:to});b.update(db.collection('users').doc(to),{followers:FV.increment(d)});b.update(db.collection('users').doc(me.uid),{following:FV.increment(d)});
  try{await b.commit();if(!on)db.collection('notifications').add({toUid:to,fromUid:me.uid,fromName:me.displayName||'anonyme',type:'follow',createdAt:Date.now(),read:false}).catch(()=>{})}catch(e){console.error(e)}
  return !on}
 let curProfileUid=null,curProfileName=null;
 async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
- curProfileUid=uid;curProfileName=name;
+ pauseFeed();curProfileUid=uid;curProfileName=name;
  $('ua').textContent=(name[0]||'?').toUpperCase();skeletonGrid($('ugrid'),9);$('uact').style.display='flex';
  $('uprof').classList.add('on');
  try{const [ud,vs]=await Promise.all([db.collection('users').doc(uid).get(),db.collection('videos').where('uid','==',uid).limit(60).get()]);
@@ -508,7 +525,7 @@ async function openProfile(uid,name){if(uid===me.uid){tab(2);return}
    vids.forEach(v=>$('ugrid').appendChild(gridTile(v)));
    if(!vids.length)$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Aucune vidéo.</div>'}
  }catch(e){$('ugrid').innerHTML='<div class="empty" style="height:auto;padding:20px">Erreur de chargement: '+(e.code||e.message||'inconnue')+'</div>'}}
-$('uback').onclick=()=>$('uprof').classList.remove('on');
+$('uback').onclick=()=>{$('uprof').classList.remove('on');resumeFeed()};
 async function renderNotifsInline(container){container.innerHTML='Chargement…';
  try{const r=await db.collection('notifications').where('toUid','==',me.uid).limit(50).get();
   let docs=r.docs.map(d=>({id:d.id,ref:d.ref,...d.data()}));docs.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
@@ -550,7 +567,7 @@ function renderCaption(el,caption){el.textContent='';
  caption.split(/(#[\p{L}0-9_]+)/gu).forEach(part=>{
   if(part.startsWith('#')&&part.length>1){const s=document.createElement('span');s.className='htag';s.textContent=part;s.onclick=(e)=>{e.stopPropagation();openHashtag(part.slice(1))};el.appendChild(s)}
   else if(part)el.appendChild(document.createTextNode(part))})}
-async function openHashtag(tag){$('htitle').textContent='#'+tag;$('hgrid').innerHTML='Chargement…';$('htag').classList.add('on');
+async function openHashtag(tag){pauseFeed();$('htitle').textContent='#'+tag;$('hgrid').innerHTML='Chargement…';$('htag').classList.add('on');
  try{const r=await db.collection('videos').orderBy('createdAt','desc').limit(200).get();
   const low='#'+tag.toLowerCase();
   const vids=r.docs.map(d=>({id:d.id,...d.data()})).filter(v=>(v.caption||'').toLowerCase().includes(low)&&canSeeVideo(v));
@@ -558,15 +575,15 @@ async function openHashtag(tag){$('htitle').textContent='#'+tag;$('hgrid').inner
   if(!vids.length){$('hgrid').innerHTML='<div class="empty" style="height:auto;padding:30px 0">Aucune vidéo avec ce hashtag.</div>';return}
   vids.forEach(v=>$('hgrid').appendChild(gridTile(v)))
  }catch(e){$('hgrid').innerHTML='<div class="empty" style="height:auto;padding:30px 0">Erreur de chargement.</div>'}}
-$('hback').onclick=()=>$('htag').classList.remove('on');
-async function openSingleVideo(v){$('vview').classList.add('on');$('vviewBody').innerHTML='Chargement…';
+$('hback').onclick=()=>{$('htag').classList.remove('on');resumeFeed()};
+async function openSingleVideo(v){pauseFeed();$('vview').classList.add('on');$('vviewBody').innerHTML='Chargement…';
  $('vdel').style.display=(v.uid===me.uid)?'flex':'none';$('vdel').onclick=()=>deleteVideo(v.id);
  try{const d=await db.collection('users').doc(v.uid).get();const pm={};pm[v.uid]=d.data()||{};
   $('vviewBody').innerHTML='';
   const el=reel(v.id,v,pm);el.style.height='100%';$('vviewBody').appendChild(el);
   const vd=el.querySelector('video');vd.play().catch(()=>{});
  }catch(e){$('vviewBody').innerHTML='<div class="empty">Erreur de chargement.</div>'}}
-$('vback').onclick=()=>{$('vview').classList.remove('on');$('vviewBody').innerHTML=''};
+$('vback').onclick=()=>{$('vview').classList.remove('on');$('vviewBody').innerHTML='';resumeFeed()};
 $('umore').onclick=()=>{if(!curProfileUid)return;$('umBlock').textContent=myBlocked.has(curProfileUid)?'Débloquer ce compte':'Bloquer ce compte';$('umenu').classList.add('on')};
 $('umCancel').onclick=()=>$('umenu').classList.remove('on');
 $('umReport').onclick=async()=>{$('umenu').classList.remove('on');const uid=curProfileUid;
@@ -577,7 +594,7 @@ $('umBlock').onclick=async()=>{const uid=curProfileUid,wasBlocked=myBlocked.has(
  }catch(e){toast('Erreur')}};
 function openMini(title){$('miniTitle').firstChild.textContent=title;$('miniBody').innerHTML='Chargement…';$('miniView').classList.add('on');return $('miniBody')}
 $('miniClose').onclick=()=>$('miniView').classList.remove('on');
-$('pmenu').onclick=()=>{$('settings').classList.add('on');renderAcctList()};
+$('pmenu').onclick=()=>{pauseFeed();$('settings').classList.add('on');renderAcctList()};
 function profileLink(uid){return location.origin+location.pathname+'?u='+uid}
 $('pShare').onclick=async()=>{const url=profileLink(me.uid);
  if(navigator.share){try{await navigator.share({title:'Nova Chat',text:'Suis-moi sur Nova Chat',url})}catch(e){}}
@@ -588,7 +605,7 @@ $('pEdit').onclick=async()=>{const d=await db.collection('users').doc(me.uid).ge
  $('epChangePhoto').onclick=()=>{$('miniView').classList.remove('on');$('pchange').click()};
  $('epSave').onclick=async()=>{const nm=$('epName').value.trim(),bio=$('epBio').value.slice(0,150),lk=$('epLink').value.trim();if(!nm){toast('Le nom est obligatoire');return}
   try{await db.collection('users').doc(me.uid).update({name:nm,nameLower:nm.toLowerCase(),bio:bio,link:lk});$('miniView').classList.remove('on');toast('Profil mis à jour');loadProf()}catch(e){toast('Erreur')}}};
-$('setBack').onclick=()=>$('settings').classList.remove('on');
+$('setBack').onclick=()=>{$('settings').classList.remove('on');resumeFeed()};
 $('siAddAcct').onclick=()=>{$('settings').classList.remove('on');auth.signOut().then(()=>{$('em').value='';$('pw').value='';toast('Connecte-toi ou crée un nouveau compte')})};
 $('siEdit').onclick=()=>$('pEdit').click();
 $('siPwd').onclick=async()=>{const cur=window.prompt('Mot de passe actuel :');if(!cur)return;
@@ -663,6 +680,11 @@ function skeletonGrid(container,n){container.innerHTML='';for(let i=0;i<(n||9);i
 function skeletonRows(container,n){container.innerHTML='';for(let i=0;i<(n||5);i++){const r=document.createElement('div');r.className='crow';
  r.innerHTML='<div class="av2 skel"></div><div style="flex:1"><div class="skel" style="height:13px;border-radius:4px;margin-bottom:7px;width:55%"></div><div class="skel" style="height:11px;border-radius:4px;width:35%"></div></div>';
  container.appendChild(r)}}
+function pauseFeed(){document.querySelectorAll('#feed video').forEach(v=>v.pause())}
+function resumeFeed(){if(!$('feed').classList.contains('on'))return;
+ const vids=document.querySelectorAll('#feed video');let best=null,bestRatio=0;
+ vids.forEach(v=>{const r=v.getBoundingClientRect(),vis=Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(r.top,0)),ratio=r.height?vis/r.height:0;if(ratio>bestRatio){bestRatio=ratio;best=v}});
+ if(best&&bestRatio>0.5)best.play().catch(()=>{})}
 function canSeeVideo(v){if((v.status||'published')!=='published')return v.uid===me.uid;
  if(myBlocked.has(v.uid))return false;
  if(v.uid===me.uid)return true;
@@ -674,7 +696,7 @@ function burstHeart(container){const h=document.createElement('div');h.className
  container.appendChild(h);setTimeout(()=>h.remove(),750)}
 function toast(msg){let t=document.getElementById('toastEl');if(!t){t=document.createElement('div');t.id='toastEl';t.style.cssText='position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:30;transition:opacity .3s';document.body.appendChild(t)}
  t.textContent=msg;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',1800)}
-async function shareVideo(url,caption){
+async function shareVideo(url,caption){if(!requireAuth())return;
  try{if(navigator.share){await navigator.share({title:'Nova Chat',text:caption||'Regarde cette vidéo sur Nova Chat',url:url})}
   else{await navigator.clipboard.writeText(url);toast('Lien copié !')}
  }catch(e){}}
@@ -693,7 +715,7 @@ async function openComments(vid,countEl,ownerUid,enabled){curVid=vid;curCmCountE
   $('clistc').scrollTop=$('clistc').scrollHeight
  }catch(e){$('clistc').innerHTML='<div class="empty" style="height:auto;padding:20px">Erreur de chargement.</div>'}}
 $('cclose').onclick=()=>$('cmts').classList.remove('on');
-async function sendComment(){if(!curCmEnabled)return;const txt=$('cin').value.trim();if(!txt||!curVid)return;$('cin').value='';
+async function sendComment(){if(!requireAuth())return;if(!curCmEnabled)return;const txt=$('cin').value.trim();if(!txt||!curVid)return;$('cin').value='';
  try{await db.collection('videos').doc(curVid).collection('comments').add({uid:me.uid,name:me.displayName||'anonyme',text:txt,createdAt:Date.now()});
   await db.collection('videos').doc(curVid).update({commentsCount:FV.increment(1)});
   if(curVidOwner&&curVidOwner!==me.uid)db.collection('notifications').add({toUid:curVidOwner,fromUid:me.uid,fromName:me.displayName||'anonyme',type:'comment',vid:curVid,text:txt.slice(0,60),createdAt:Date.now(),read:false}).catch(()=>{});
@@ -752,27 +774,33 @@ function fmtChatTime(ts){if(!ts)return'';const d=new Date(ts),now=new Date();
  if(d.toDateString()===now.toDateString())return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
  const y=new Date(now);y.setDate(now.getDate()-1);if(d.toDateString()===y.toDateString())return'Hier';
  return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')}
-let clistUnsub=null;
+let clistUnsub=null,lastChatDocs=[],lastChatProfiles={},curChatFilter='all';
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));curChatFilter=c.dataset.f;renderChatList()});
+function renderChatList(){const box=$('clist');box.innerHTML='';
+ let docs=lastChatDocs;
+ if(curChatFilter==='unread')docs=docs.filter(c=>{const readAt=c['read_'+me.uid]||0;return(c.lastAt||0)>readAt&&c.lastFrom&&c.lastFrom!==me.uid});
+ else if(curChatFilter==='req')docs=docs.filter(c=>{const otherUid=c.participants.find(p=>p!==me.uid);return c.lastFrom&&c.lastFrom!==me.uid&&!myFol.has(otherUid)});
+ if(!docs.length){box.innerHTML='<div class="empty">'+(curChatFilter==='all'?'Aucune conversation.<br>Cherche quelqu\'un ci-dessus pour commencer.':curChatFilter==='unread'?'Aucun message non lu.':'Aucune demande de message.')+'</div>';return}
+ docs.forEach(c=>{const otherUid=c.participants.find(p=>p!==me.uid),otherName=(c.names&&c.names[otherUid])||'anonyme',u=lastChatProfiles[otherUid]||{};
+  const readAt=c['read_'+me.uid]||0,unread=(c.lastAt||0)>readAt&&c.lastFrom&&c.lastFrom!==me.uid;
+  const row=document.createElement('div');row.className='crow';
+  row.innerHTML='<div class="av2"></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><b></b><span class="ctime"></span></div><div class="lm"></div></div>'+(unread?'<span class="udot"></span>':'');
+  setAvatar(row.querySelector('.av2'),u.photoURL,otherName[0].toUpperCase());
+  setNameWithBadge(row.querySelector('b'),otherName,isBadged(u));
+  row.querySelector('.ctime').textContent=fmtChatTime(c.lastAt);
+  const lm=row.querySelector('.lm');lm.textContent=(c.lastFrom===me.uid?'Vous: ':'')+(c.lastMsg||'Démarrer la conversation');
+  if(unread){row.style.fontWeight='600';lm.style.color='var(--t)';lm.style.fontWeight='600'}
+  row.onclick=()=>openChat(otherUid,otherName);
+  box.appendChild(row)})}
 async function loadChats(){const box=$('clist');skeletonRows(box,5);
  if(clistUnsub){clistUnsub();clistUnsub=null}
  clistUnsub=db.collection('chats').where('participants','array-contains',me.uid).onSnapshot(async r=>{
   try{let docs=r.docs.map(d=>({id:d.id,...d.data()}));docs.sort((a,b)=>(b.lastAt||0)-(a.lastAt||0));
-   box.innerHTML='';
-   if(!docs.length){box.innerHTML='<div class="empty">Aucune conversation.<br>Cherche quelqu\'un ci-dessus pour commencer.</div>';return}
+   lastChatDocs=docs;
+   if(!docs.length){lastChatProfiles={};renderChatList();return}
    const uids=[...new Set(docs.map(c=>c.participants.find(p=>p!==me.uid)))];
    const profiles={};await Promise.all(uids.map(async uid=>{try{const d=await db.collection('users').doc(uid).get();profiles[uid]=d.data()||{}}catch(e){profiles[uid]={}}}));
-   box.innerHTML='';
-   docs.forEach(c=>{const otherUid=c.participants.find(p=>p!==me.uid),otherName=(c.names&&c.names[otherUid])||'anonyme',u=profiles[otherUid]||{};
-    const readAt=c['read_'+me.uid]||0,unread=(c.lastAt||0)>readAt&&c.lastFrom&&c.lastFrom!==me.uid;
-    const row=document.createElement('div');row.className='crow';
-    row.innerHTML='<div class="av2"></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><b></b><span class="ctime"></span></div><div class="lm"></div></div>'+(unread?'<span class="udot"></span>':'');
-    setAvatar(row.querySelector('.av2'),u.photoURL,otherName[0].toUpperCase());
-    setNameWithBadge(row.querySelector('b'),otherName,isBadged(u));
-    row.querySelector('.ctime').textContent=fmtChatTime(c.lastAt);
-    const lm=row.querySelector('.lm');lm.textContent=(c.lastFrom===me.uid?'Vous: ':'')+(c.lastMsg||'Démarrer la conversation');
-    if(unread){row.style.fontWeight='600';lm.style.color='var(--t)';lm.style.fontWeight='600'}
-    row.onclick=()=>openChat(otherUid,otherName);
-    box.appendChild(row)})
+   lastChatProfiles=profiles;renderChatList()
   }catch(e){box.innerHTML='<div class="empty">Erreur de chargement.</div>'}
  },()=>{box.innerHTML='<div class="empty">Erreur de chargement.</div>'})}
 let curChat=null,curUnsub=null,curDocUnsub=null,curOtherUid=null,curOtherName=null,lastMsgDocs=[],typingTimer=null;
@@ -792,7 +820,7 @@ function renderThread(qs,otherReadAt){
   tEl.innerHTML=html;row.appendChild(tEl);
   box.appendChild(row)});
  box.scrollTop=box.scrollHeight}
-async function openChat(otherUid,otherName){const chatId=[me.uid,otherUid].sort().join('_');curChat=chatId;curOtherUid=otherUid;curOtherName=otherName;
+async function openChat(otherUid,otherName){if(!requireAuth())return;pauseFeed();const chatId=[me.uid,otherUid].sort().join('_');curChat=chatId;curOtherUid=otherUid;curOtherName=otherName;
  const ref=db.collection('chats').doc(chatId);
  $('tname').textContent='@'+otherName;$('tstatus').textContent='';$('tstatus').className='tstatus';
  $('tav').textContent=otherName[0].toUpperCase();
@@ -815,7 +843,7 @@ async function openChat(otherUid,otherName){const chatId=[me.uid,otherUid].sort(
   lastMsgDocs=qs.docs;renderThread(qs,otherReadAt);
   const upd={};upd['read_'+me.uid]=Date.now();ref.update(upd).then(refreshInboxBadge).catch(()=>{})
  },e=>{$('tmsgs').innerHTML='<div class="empty">Erreur de chargement.</div>'})}
-$('tback').onclick=()=>{$('thread').classList.remove('on');if(curUnsub){curUnsub();curUnsub=null}if(curDocUnsub){curDocUnsub();curDocUnsub=null}curChat=null;lastMsgDocs=[];loadChats()};
+$('tback').onclick=()=>{$('thread').classList.remove('on');if(curUnsub){curUnsub();curUnsub=null}if(curDocUnsub){curDocUnsub();curDocUnsub=null}curChat=null;lastMsgDocs=[];loadChats();resumeFeed()};
 async function sendMsg(){const txt=$('tin').value.trim();if(!txt||!curChat)return;$('tin').value='';
  const ref=db.collection('chats').doc(curChat);
  const upd={};upd['typing_'+me.uid]=0;ref.update(upd).catch(()=>{});
@@ -825,8 +853,8 @@ $('tin').addEventListener('input',()=>{if(!curChat)return;const ref=db.collectio
 $('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
 const CLOUD_NAME='qj5r8wt2',UPLOAD_PRESET='nova_chat_videos';
 let pendingFile=null,mediaStream=null,mediaRecorder=null,recChunks=[],recTimer=null,recSeconds=0,facingMode='user',pendingSoundName='Son original';
-$('pl').onclick=()=>openStudio();
-function openStudio(){$('studio').classList.add('on');setStudioMode('camera')}
+$('pl').onclick=()=>{if(!requireAuth())return;openStudio()};
+function openStudio(){pauseFeed();$('studio').classList.add('on');setStudioMode('camera')}
 function setStudioMode(m){document.querySelectorAll('.stmode').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
  if(m==='camera'){$('stPlaceholder').style.display='none';$('stPreview').style.display='block';startCamera()}
  else{stopCamera();$('stPreview').style.display='none';$('stPlaceholder').style.display='flex';
@@ -838,7 +866,7 @@ async function startCamera(){stopCamera();
 function stopCamera(){if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null}}
 $('stFlip').onclick=()=>{facingMode=facingMode==='user'?'environment':'user';
  if(document.querySelector('.stmode.on').dataset.m==='camera')startCamera()};
-$('stClose').onclick=()=>{stopCamera();if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();$('studio').classList.remove('on')};
+$('stClose').onclick=()=>{stopCamera();if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();$('studio').classList.remove('on');resumeFeed()};
 $('stImport').onclick=()=>$('fl').click();
 $('fl').addEventListener('change',()=>{const f=$('fl').files[0];if(f){stopCamera();$('studio').classList.remove('on');openPublish(f)}});
 $('stRec').onclick=()=>{if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();else startRecording()};
