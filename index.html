@@ -66,14 +66,19 @@ main{flex:1;position:relative;overflow:hidden}
 
 .menubtn{position:absolute;top:calc(14px + env(safe-area-inset-top,0));right:14px;background:none;border:0;color:var(--t);font-size:22px;z-index:2;line-height:1}
 .setrow{width:100%;text-align:left;background:var(--s);border:0;border-radius:10px;padding:14px;font-size:14.5px;color:var(--t);margin-bottom:8px;display:block}
-.quickrow{display:flex;justify-content:space-around;padding:10px 4px 18px}
+.quickrow{display:flex;justify-content:space-around;padding:10px 4px 18px;margin:0 10px}
 .quickitem{display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:0;color:var(--t)}
 .quickitem .qcircle{width:52px;height:52px;border-radius:50%;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff}
 .quickitem span{font-size:11.5px;color:var(--m)}
-.setitem{display:flex;align-items:center;gap:13px;padding:12px 2px;border-bottom:1px solid var(--l);cursor:pointer}
-.setitem .sicon2{width:37px;height:37px;border-radius:50%;background:var(--s);display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 37px}
-.setitem b{flex:1;font-weight:600;font-size:14px}
+.section-group{margin-bottom:22px}
+.section-header{font-size:11.5px;font-weight:600;color:var(--m);padding:0 18px 8px;text-transform:uppercase;letter-spacing:.5px}
+.menu-list{background:var(--s);border-radius:12px;margin:0 14px;overflow:hidden}
+.setitem{display:flex;align-items:center;gap:13px;padding:13px 16px;border-bottom:1px solid var(--l);cursor:pointer}
+.setitem:last-child{border-bottom:0}
+.setitem .sicon2{width:34px;height:34px;border-radius:50%;background:var(--l);display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 34px}
+.setitem b{flex:1;font-weight:500;font-size:14.5px}
 .setitem .chev{color:var(--m);font-size:18px}
+.themequick{background:none;border:0;color:var(--a);font-size:13.5px;font-weight:700}
 .switchrow{display:flex;align-items:center;justify-content:space-between;background:var(--s);border-radius:12px;padding:14px;margin-bottom:16px}
 .switchrow .swleft{display:flex;align-items:center;gap:12px;font-size:14.5px;font-weight:600}
 .swtoggle{position:relative;width:48px;height:28px;flex:0 0 48px;-webkit-appearance:none;appearance:none;background:#767577;border-radius:16px;outline:0;cursor:pointer;transition:background .2s}
@@ -287,33 +292,40 @@ nav button{position:relative}
 
 <div id="gatesheet"><div><div style="text-align:center;padding:26px 24px 12px"><div style="font-size:38px;margin-bottom:10px">🔒</div><b style="font-size:17px;display:block;margin-bottom:6px">Connecte-toi à Nova Chat</b><span style="color:var(--m);font-size:13px;line-height:1.4">Crée un compte gratuit pour aimer, commenter, publier et discuter.</span></div><button class="msheetbtn" id="gateLogin" style="color:var(--a);font-weight:700">Se connecter / Créer un compte</button><button class="msheetbtn" id="gateCancel" style="color:var(--m)">Plus tard</button></div></div>
 
-<div id="settings" class="ovl"><div class="thead"><button id="setBack">←</button><b>Paramètres</b></div>
-<div style="padding:10px 14px 24px;overflow-y:auto">
+<div id="settings" class="ovl"><div class="thead"><button id="setBack">←</button><b>Paramètres</b><div style="flex:1"></div><button id="qThemeHead" class="themequick">Thème</button></div>
+<div style="padding:10px 0 24px;overflow-y:auto">
 <div class="quickrow">
 <button class="quickitem" id="qrBtn"><div class="qcircle">▦</div><span>QR Code</span></button>
 <button class="quickitem" id="qThemeBtn"><div class="qcircle">🎨</div><span>Thème</span></button>
 <button class="quickitem" id="qBadgeBtn"><div class="qcircle">✓</div><span>Badge Nova</span></button>
 </div>
-<div class="isec" style="padding:6px 0 4px">Compte</div>
+<div class="section-group"><div class="section-header">Compte</div><div class="menu-list">
 <div class="setitem" id="siEdit"><div class="sicon2">👤</div><b>Modifier le profil</b><span class="chev">›</span></div>
 <div class="setitem" id="siPwd"><div class="sicon2">🔑</div><b>Mot de passe</b><span class="chev">›</span></div>
-<div class="isec" style="padding:14px 0 4px">Comptes</div>
-<div id="acctList"></div>
-<div class="setitem" id="siAddAcct"><div class="sicon2">👥</div><b>Ajouter / changer de compte</b><span class="chev">›</span></div>
-<div class="isec" style="padding:14px 0 4px">Confidentialité</div>
 <div class="setitem" id="siPrivacy"><div class="sicon2">🔒</div><b>Confidentialité & sécurité</b><span class="chev">›</span></div>
-<div class="setitem" id="siBlocked"><div class="sicon2">🚫</div><b>Comptes bloqués</b><span class="chev">›</span></div>
-<div class="isec" style="padding:14px 0 4px">Application</div>
-<div class="setitem" id="siTheme"><div class="sicon2">🎨</div><b>Thème & apparence</b><span class="chev">›</span></div>
+<div class="setitem" id="siShareP"><div class="sicon2">🔗</div><b>Partager le profil</b><span class="chev">›</span></div>
+</div></div>
+<div class="section-group"><div class="section-header">Contenu et affichage</div><div class="menu-list">
 <div class="setitem" id="siNotif"><div class="sicon2">🔔</div><b>Notifications</b><span class="chev">›</span></div>
+<div class="setitem" id="siTheme"><div class="sicon2">🌓</div><b>Thème & apparence</b><span class="chev">›</span></div>
 <div class="setitem" id="siLang"><div class="sicon2">🌐</div><b>Langues</b><span class="chev">›</span></div>
-<div class="setitem" id="siStorage"><div class="sicon2">💾</div><b>Stockage & cache</b><span class="chev">›</span></div>
-<div class="isec" style="padding:14px 0 4px">Créateur</div>
 <div class="setitem" id="siStats"><div class="sicon2">📊</div><b>Statistiques & analytics</b><span class="chev">›</span></div>
 <div class="setitem" id="siVerif"><div class="sicon2">✓</div><b>Badge vérifié Nova</b><span class="chev">›</span></div>
-<div class="isec" style="padding:14px 0 4px">Autre</div>
+</div></div>
+<div class="section-group"><div class="section-header">Cache et données</div><div class="menu-list">
+<div class="setitem" id="siStorage"><div class="sicon2">💾</div><b>Stockage & cache</b><span class="chev">›</span></div>
+</div></div>
+<div class="section-group"><div class="section-header">Comptes</div><div class="menu-list" id="acctListWrap">
+<div id="acctList"></div>
+<div class="setitem" id="siAddAcct"><div class="sicon2">👥</div><b>Ajouter / changer de compte</b><span class="chev">›</span></div>
+<div class="setitem" id="siBlocked"><div class="sicon2">🚫</div><b>Comptes bloqués</b><span class="chev">›</span></div>
+</div></div>
+<div class="section-group"><div class="section-header">Autre</div><div class="menu-list">
 <div class="setitem" id="siHelp"><div class="sicon2">❓</div><b>Aide & support</b><span class="chev">›</span></div>
-<div class="setitem" id="siLogout" style="border-bottom:0"><div class="sicon2">🚪</div><b style="color:#ff5c5c">Déconnexion</b><span class="chev">›</span></div>
+</div></div>
+<div class="section-group"><div class="section-header">Connexion</div><div class="menu-list">
+<div class="setitem" id="siLogout"><div class="sicon2" style="background:rgba(255,92,92,.15)">🚪</div><b style="color:#ff5c5c">Déconnexion</b></div>
+</div></div>
 </div></div>
 
 <div id="miniView"><div><div class="cmthead" id="miniTitle">Titre<button id="miniClose">✕</button></div>
@@ -670,6 +682,8 @@ $('siStorage').onclick=()=>{const body=openMini('Stockage & cache');
 $('siHelp').onclick=()=>{const body=openMini('Aide & support');
  body.innerHTML='<div class="setrow"><b style="display:block;margin-bottom:4px">Comment publier une vidéo ?</b><span style="color:var(--m);font-size:13px">Appuie sur le bouton + en bas de l\'écran.</span></div><div class="setrow"><b style="display:block;margin-bottom:4px">Comment signaler un compte ?</b><span style="color:var(--m);font-size:13px">Ouvre son profil puis appuie sur ⋯.</span></div><div class="setrow"><b style="display:block;margin-bottom:4px">Un bug ou une question ?</b><span style="color:var(--m);font-size:13px">Écris-nous via le profil de l\'administrateur dans l\'application.</span></div>'};
 $('siLogout').onclick=()=>{if(window.confirm('Se déconnecter de Nova Chat ?')){$('settings').classList.remove('on');auth.signOut()}};
+$('siShareP').onclick=()=>$('pShare').click();
+$('qThemeHead').onclick=()=>applyDarkMode(!isDarkMode());
 $('qrBtn').onclick=()=>{const body=openMini('QR Code du profil');const url=profileLink(me.uid);
  body.innerHTML='<div style="text-align:center;padding:10px 0"><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(url)+'" style="width:220px;height:220px;border-radius:12px;background:#fff;padding:10px"><div style="color:var(--m);font-size:12px;margin-top:10px">Scanne ce code pour accéder directement à ton profil Nova Chat.</div></div>'};
 async function openBlockedList(){$('flistTitle').firstChild.textContent='Comptes bloqués';$('flist').classList.add('on');const body=$('flistBody');body.innerHTML='Chargement…';
