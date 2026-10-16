@@ -101,10 +101,10 @@ main{flex:1;position:relative;overflow:hidden}
 @keyframes spin{to{transform:rotate(360deg)}}
 #ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;gap:10px;pointer-events:none;z-index:5}
 #ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px;position:relative;display:flex;align-items:center;justify-content:center}
-.ftabs{position:absolute;left:50%;top:calc(14px + env(safe-area-inset-top,0));transform:translateX(-50%);display:flex;gap:22px;pointer-events:auto}
-.ftabs .ftab{pointer-events:auto;background:none;border-radius:0;width:auto;height:auto;color:rgba(255,255,255,.6);font-size:15px;font-weight:700;padding:4px 0;position:relative}
-.ftabs .ftab.on{color:#fff}
-.ftabs .ftab.on::after{content:'';position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);width:18px;height:2.5px;background:#fff;border-radius:2px}
+.ftabs{position:absolute;left:50%;top:calc(14px + env(safe-area-inset-top,0));transform:translateX(-50%);display:flex;gap:28px;pointer-events:auto}
+#ftop button.ftab{pointer-events:auto;background:none;border-radius:0;width:auto;height:auto;color:rgba(255,255,255,.6);font-size:15px;font-weight:700;padding:4px 2px;position:relative;white-space:nowrap}
+#ftop button.ftab.on{color:#fff}
+#ftop button.ftab.on::after{content:'';position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:18px;height:2.5px;background:#fff;border-radius:2px}
 .ndot{display:none;position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--b);border:1.5px solid rgba(0,0,0,.35)}
 #cmts,#notifs,#flist,#umenu,#gatesheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
 #cmts.on,#notifs.on,#flist.on,#umenu.on,#gatesheet.on{display:flex}
@@ -261,7 +261,7 @@ nav button{position:relative}
 <div id="studio" class="ovl" style="background:#000">
 <div class="sthead"><button id="stClose">✕</button><div style="flex:1"></div><button id="stFlip">🔄</button></div>
 <div id="stStage"><video id="stPreview" autoplay playsinline muted></video><div id="stPlaceholder" class="empty"></div><div id="stTimer"></div></div>
-<button id="stTemplates" class="pbchip" style="position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)">💡 Essayer ces modèles</button>
+<div style="display:flex;justify-content:center"><button id="stTemplates" class="pbchip" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3);margin-bottom:18px">💡 Essayer ces modèles</button></div>
 <div class="stmodes"><button class="stmode on" data-m="camera">Publier</button><button class="stmode" data-m="live">Mode live</button></div>
 <div class="stbar"><button id="stImport" class="stside">🖼️<span>Importer</span></button><button id="stRec" class="strec"></button><div class="stside" style="width:46px"></div></div>
 </div>
