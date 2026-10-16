@@ -47,7 +47,7 @@ main{flex:1;position:relative;overflow:hidden}
 #studio{background:#000}
 .sthead{display:flex;align-items:center;justify-content:space-between;padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0));color:#fff}
 .sthead button{background:rgba(255,255,255,.12);border:0;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px}
-.stmodes{display:flex;gap:18px}
+.stmodes{display:flex;gap:22px;justify-content:center;padding:14px 0 4px}
 .stmode{background:none;border:0;color:rgba(255,255,255,.55);font-size:13.5px;font-weight:700;padding:4px 0}
 .stmode.on{color:#fff}
 #stStage{flex:1;position:relative;background:#000;overflow:hidden}
@@ -101,6 +101,10 @@ main{flex:1;position:relative;overflow:hidden}
 @keyframes spin{to{transform:rotate(360deg)}}
 #ftop{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top,0)) 16px 10px;display:flex;justify-content:flex-end;gap:10px;pointer-events:none;z-index:5}
 #ftop button{pointer-events:auto;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:50%;width:38px;height:38px;font-size:16px;position:relative;display:flex;align-items:center;justify-content:center}
+.ftabs{position:absolute;left:50%;top:calc(14px + env(safe-area-inset-top,0));transform:translateX(-50%);display:flex;gap:22px;pointer-events:auto}
+.ftabs .ftab{pointer-events:auto;background:none;border-radius:0;width:auto;height:auto;color:rgba(255,255,255,.6);font-size:15px;font-weight:700;padding:4px 0;position:relative}
+.ftabs .ftab.on{color:#fff}
+.ftabs .ftab.on::after{content:'';position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);width:18px;height:2.5px;background:#fff;border-radius:2px}
 .ndot{display:none;position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--b);border:1.5px solid rgba(0,0,0,.35)}
 #cmts,#notifs,#flist,#umenu,#gatesheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:11}
 #cmts.on,#notifs.on,#flist.on,#umenu.on,#gatesheet.on{display:flex}
@@ -143,6 +147,8 @@ main{flex:1;position:relative;overflow:hidden}
 .av img{width:100%;height:100%;object-fit:cover}
 .avwrap{position:relative;width:84px;margin:0 auto}
 .camBtn{position:absolute;bottom:6px;right:-2px;width:28px;height:28px;border-radius:50%;background:var(--a);border:2px solid var(--bg);color:#fff;display:flex;align-items:center;justify-content:center;padding:0}
+.storyBtn{position:absolute;bottom:6px;left:-2px;width:28px;height:28px;border-radius:50%;background:var(--s);border:2px solid var(--bg);color:var(--t);display:flex;align-items:center;justify-content:center;padding:0}
+.avwrap.hasStory .av{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--a)}
 .folwrap{position:relative;width:44px;height:44px}
 .avmini{width:44px;height:44px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--a),var(--b));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;border:2px solid #fff;cursor:pointer}
 .avmini img{width:100%;height:100%;object-fit:cover}
@@ -224,13 +230,16 @@ nav button{position:relative}
 
 <div id="app"><main>
 <div id="feed" class="view on"></div>
-<div id="ftop"><button id="gosearch"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+<div id="ftop"><div class="ftabs"><button class="ftab on" data-m="all">Publication</button><button class="ftab" data-m="friends">Amis</button></div><button id="gosearch"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
 <div id="chats" class="view"><div class="ihead" style="padding-bottom:0">Ami(e)s</div><div class="sbox" style="margin:12px 14px 6px"><span class="sicon"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sq" placeholder="Rechercher quelqu'un..."></div><div id="sres" style="padding:0 14px"></div><div id="sdefault" style="padding:0 14px 20px;overflow-y:auto"></div></div>
 <div id="inbox" class="view"><div class="ihead">Messages</div>
 <div class="iseg"><button id="segChats" class="active">Discussions</button><button id="segAct">Activité<span class="segdot" id="segActDot" style="display:none"></span></button></div>
 <div id="inboxChats"><div class="chipRow"><button class="chip on" data-f="all">Toutes</button><button class="chip" data-f="unread">Non lus</button><button class="chip" data-f="req">Demandes</button></div><div id="clist" style="padding:0 14px"></div></div>
 <div id="inboxAct" style="display:none"><div id="nlistInline" style="padding:0 14px"></div></div></div>
-<div id="prof" class="view"><button id="pmenu" class="menubtn">☰</button><div class="avwrap"><div class="av" id="pa"></div><button id="pchange" class="camBtn"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button><input type="file" id="pfile" accept="image/*" style="display:none"></div><h2 id="pn" style="margin:0"></h2>
+<div id="prof" class="view"><button id="pmenu" class="menubtn">☰</button><div class="avwrap" id="pavwrap"><div class="av" id="pa"></div>
+<button id="pstory" class="storyBtn" title="Ajouter à ta Story"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+<button id="pchange" class="camBtn" title="Modifier la photo"><svg viewBox="0 0 24 24" width="13" height="13"><path d="M15.5 4.5l3 3L8 18l-4 1 1-4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
+<input type="file" id="pfile" accept="image/*" style="display:none"></div><h2 id="pn" style="margin:0"></h2>
 <div class="stats"><div class="tap" id="s1w"><b id="s1">0</b><span>Abonnements</span></div><div class="tap" id="s2w"><b id="s2">0</b><span>Abonnés</span></div><div><b id="s3">0</b><span>J'aime</span></div></div>
 <div class="bioRow"><p class="bio" id="pbio"></p><button id="bioEdit"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
 <div style="display:flex;gap:10px;margin-top:14px"><button class="out" id="pEdit" style="flex:1">Éditer le profil</button><button class="out" id="pShare" style="flex:1">Partager le profil</button></div>
@@ -247,9 +256,13 @@ nav button{position:relative}
 
 <input type="file" id="fl" accept="video/*" style="display:none">
 
+<div id="storyView" class="ovl" style="background:#000"><button id="svClose" style="position:absolute;z-index:3;top:calc(14px + env(safe-area-inset-top,0));left:14px;background:rgba(255,255,255,.15);border:0;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px">✕</button><video id="svVideo" playsinline style="width:100%;height:100%;object-fit:contain;background:#000"></video></div>
+
 <div id="studio" class="ovl" style="background:#000">
-<div class="sthead"><button id="stClose">✕</button><div class="stmodes"><button class="stmode on" data-m="camera">Caméra</button><button class="stmode" data-m="live">Direct</button></div><button id="stFlip">🔄</button></div>
+<div class="sthead"><button id="stClose">✕</button><div style="flex:1"></div><button id="stFlip">🔄</button></div>
 <div id="stStage"><video id="stPreview" autoplay playsinline muted></video><div id="stPlaceholder" class="empty"></div><div id="stTimer"></div></div>
+<button id="stTemplates" class="pbchip" style="position:absolute;bottom:150px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)">💡 Essayer ces modèles</button>
+<div class="stmodes"><button class="stmode on" data-m="camera">Publier</button><button class="stmode" data-m="live">Mode live</button></div>
 <div class="stbar"><button id="stImport" class="stside">🖼️<span>Importer</span></button><button id="stRec" class="strec"></button><div class="stside" style="width:46px"></div></div>
 </div>
 
@@ -404,7 +417,7 @@ function gridTile(v){const t=document.createElement('div');t.className='vtile';
  t.onclick=()=>openSingleVideo(v);
  return t}
 async function loadProf(){const d=await db.collection('users').doc(me.uid).get(),u=d.data()||{};const n=u.name||me.displayName||'Moi';
- setAvatar($('pa'),u.photoURL,n[0].toUpperCase());setNameWithBadge($('pn'),n,isBadged(u));
+ setAvatar($('pa'),u.photoURL,n[0].toUpperCase());setNameWithBadge($('pn'),n,isBadged(u));checkMyStory();
  $('s1').textContent=u.following||0;$('s2').textContent=u.followers||0;$('s3').textContent=u.likes||0;
  $('s1w').onclick=()=>openFollowList(me.uid,'following');$('s2w').onclick=()=>openFollowList(me.uid,'followers');
  renderBioLinks($('pbio'),(u.bio||'')+(u.link?'\n'+u.link:''));
@@ -435,14 +448,8 @@ $('pfile').addEventListener('change',async()=>{const f=$('pfile').files[0];if(!f
   await db.collection('users').doc(me.uid).update({photoURL:data.secure_url});
   toast('Photo mise à jour !');loadProf()
  }catch(e){toast('Erreur envoi photo')}});
-async function loadFeed(){const f=$('feed');
- const [vs,ls,fs,sv,bl]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(20).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get(),db.collection('blocks').where('from','==',me.uid).get()]);
- myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));myBlocked=new Set(bl.docs.map(d=>d.data().to));f.innerHTML='';
- const docs=vs.docs.filter(d=>canSeeVideo({id:d.id,...d.data()}));
- if(!docs.length){f.innerHTML='<div class="empty">Aucune vidéo pour le moment.<br>Sois le premier : appuie sur +</div>';return}
- const uids=[...new Set(docs.map(d=>d.data().uid))],pm={};
- await Promise.all(uids.map(async u=>{try{const d2=await db.collection('users').doc(u).get();pm[u]=d2.data()||null}catch(e){}}));
- docs.forEach(d=>f.appendChild(reel(d.id,{id:d.id,...d.data()},pm)));
+let rawFeedVideos=[],feedPm={},feedMode='all';
+function attachFeedObservers(f){
  const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');
   if(e.isIntersecting){if(!v.src&&v.dataset.src)v.src=v.dataset.src;v.play().catch(()=>{});const vid=e.target.dataset.vid;
    if(vid&&!viewedSet.has(vid)){viewedSet.add(vid);db.collection('videos').doc(vid).update({views:FV.increment(1)}).catch(()=>{})}}
@@ -450,6 +457,23 @@ async function loadFeed(){const f=$('feed');
  const ioLazy=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('video');
   if(e.isIntersecting&&!v.src&&v.dataset.src)v.src=v.dataset.src}),{rootMargin:'150% 0px',threshold:0});
  f.querySelectorAll('.reel').forEach(r=>{io.observe(r);ioLazy.observe(r)})}
+function renderFeedMode(){const f=$('feed');f.innerHTML='';
+ let list=rawFeedVideos;
+ if(feedMode==='friends')list=list.filter(v=>myFol.has(v.uid));
+ if(!list.length){f.innerHTML=feedMode==='friends'?'<div class="empty">Les vidéos des comptes que tu suis apparaîtront ici.<br>Commence par suivre quelqu\'un dans l\'onglet Ami(e)s.</div>':'<div class="empty">Aucune vidéo pour le moment.<br>Sois le premier : appuie sur +</div>';return}
+ list.forEach(v=>f.appendChild(reel(v.id,v,feedPm)));
+ attachFeedObservers(f)}
+document.querySelectorAll('.ftab').forEach(b=>b.onclick=()=>{
+ if(b.dataset.m==='friends'&&!requireAuth())return;
+ document.querySelectorAll('.ftab').forEach(x=>x.classList.toggle('on',x===b));feedMode=b.dataset.m;renderFeedMode()});
+async function loadFeed(){
+ const [vs,ls,fs,sv,bl]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(60).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get(),db.collection('blocks').where('from','==',me.uid).get()]);
+ myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));myBlocked=new Set(bl.docs.map(d=>d.data().to));
+ const docs=vs.docs.filter(d=>canSeeVideo({id:d.id,...d.data()}));
+ rawFeedVideos=docs.map(d=>({id:d.id,...d.data()}));
+ const uids=[...new Set(rawFeedVideos.map(v=>v.uid))],pm={};
+ await Promise.all(uids.map(async u=>{try{const d2=await db.collection('users').doc(u).get();pm[u]=d2.data()||null}catch(e){}}));
+ feedPm=pm;renderFeedMode()}
 function reel(id,v,pm){const r=document.createElement('div');r.className='reel';r.dataset.vid=id;pm=pm||{};
  r.innerHTML=`<video loop playsinline muted preload="none"></video>
 <div class="prog"><div class="progfill"></div></div>
@@ -881,8 +905,24 @@ $('tin').addEventListener('input',()=>{if(!curChat)return;const ref=db.collectio
  clearTimeout(typingTimer);typingTimer=setTimeout(()=>{const u2={};u2['typing_'+me.uid]=0;ref.update(u2).catch(()=>{})},3000)});
 $('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
 const CLOUD_NAME='qj5r8wt2',UPLOAD_PRESET='nova_chat_videos';
-let pendingFile=null,mediaStream=null,mediaRecorder=null,recChunks=[],recTimer=null,recSeconds=0,facingMode='user',pendingSoundName='Son original';
-$('pl').onclick=()=>{if(!requireAuth())return;openStudio()};
+let pendingFile=null,mediaStream=null,mediaRecorder=null,recChunks=[],recTimer=null,recSeconds=0,facingMode='user',pendingSoundName='Son original',pendingTemplateCaption='',captureMode='post',myStoryUrl=null;
+$('pl').onclick=()=>{if(!requireAuth())return;captureMode='post';openStudio()};
+$('pstory').onclick=()=>{if(!requireAuth())return;captureMode='story';openStudio()};
+$('pa').onclick=()=>{if(myStoryUrl)viewStory(myStoryUrl)};
+function viewStory(url){pauseFeed();$('svVideo').src=url;$('storyView').classList.add('on');$('svVideo').play().catch(()=>{})}
+$('svClose').onclick=()=>{$('svVideo').pause();$('svVideo').src='';$('storyView').classList.remove('on');resumeFeed()};
+async function checkMyStory(){try{const r=await db.collection('stories').where('uid','==',me.uid).get();
+ const cutoff=Date.now()-86400000;let latest=null;
+ r.forEach(d=>{const s=d.data();if((s.createdAt||0)>cutoff&&(!latest||s.createdAt>latest.createdAt))latest=s});
+ myStoryUrl=latest?latest.url:null;$('pavwrap').classList.toggle('hasStory',!!myStoryUrl)
+ }catch(e){}}
+async function uploadStory(file){toast('Envoi de ta Story…');
+ const fd=new FormData();fd.append('file',file);fd.append('upload_preset',UPLOAD_PRESET);
+ try{const res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/video/upload',{method:'POST',body:fd});
+  const data=await res.json();if(!data.secure_url)throw new Error('no url');
+  await db.collection('stories').add({uid:me.uid,url:data.secure_url,createdAt:Date.now()});
+  toast('Story publiée !');checkMyStory()
+ }catch(e){toast('Erreur lors de l\'envoi de la Story')}}
 function openStudio(){pauseFeed();$('studio').classList.add('on');setStudioMode('camera')}
 function setStudioMode(m){document.querySelectorAll('.stmode').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
  if(m==='camera'){$('stPlaceholder').style.display='none';$('stPreview').style.display='block';startCamera()}
@@ -897,7 +937,11 @@ $('stFlip').onclick=()=>{facingMode=facingMode==='user'?'environment':'user';
  if(document.querySelector('.stmode.on').dataset.m==='camera')startCamera()};
 $('stClose').onclick=()=>{stopCamera();if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();$('studio').classList.remove('on');resumeFeed()};
 $('stImport').onclick=()=>$('fl').click();
-$('fl').addEventListener('change',()=>{const f=$('fl').files[0];if(f){stopCamera();$('studio').classList.remove('on');openPublish(f)}});
+$('stTemplates').onclick=()=>{const body=openMini('Essayer ces modèles');
+ const tpls=['💡 3 choses que j\'ai apprises cette semaine...','🔥 POV : quand...','❓ Tu savais que...','📍 Journée dans ma vie à...','✨ Avant / après...','🎯 Mon conseil du jour :'];
+ body.innerHTML=tpls.map(t=>'<button class="setrow" style="text-align:left">'+t+'</button>').join('');
+ body.querySelectorAll('button').forEach((b,i)=>b.onclick=()=>{pendingTemplateCaption=tpls[i].replace(/^[^ ]+ /,'');$('miniView').classList.remove('on');toast('Modèle ajouté — il sera prérempli à la publication')})};
+$('fl').addEventListener('change',()=>{const f=$('fl').files[0];if(f){stopCamera();$('studio').classList.remove('on');if(captureMode==='story')uploadStory(f);else openPublish(f)}});
 $('stRec').onclick=()=>{if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();else startRecording()};
 function startRecording(){if(!mediaStream){toast('Caméra non disponible');return}
  recChunks=[];let mime='video/mp4';
@@ -907,13 +951,13 @@ function startRecording(){if(!mediaStream){toast('Caméra non disponible');retur
  mediaRecorder.onstop=()=>{clearInterval(recTimer);$('stTimer').style.display='none';$('stRec').classList.remove('rec');
   const blob=new Blob(recChunks,{type:mediaRecorder.mimeType||'video/mp4'});
   const file=new File([blob],'nova-rec.'+(blob.type.includes('mp4')?'mp4':'webm'),{type:blob.type});
-  stopCamera();$('studio').classList.remove('on');openPublish(file)};
+  stopCamera();$('studio').classList.remove('on');if(captureMode==='story')uploadStory(file);else openPublish(file)};
  mediaRecorder.start();$('stRec').classList.add('rec');recSeconds=0;$('stTimer').style.display='block';$('stTimer').textContent='0:00';
  recTimer=setInterval(()=>{recSeconds++;const m=Math.floor(recSeconds/60),s=recSeconds%60;$('stTimer').textContent=m+':'+(s<10?'0':'')+s;
   if(recSeconds>=60)mediaRecorder.stop()},1000)}
 function openPublish(file){pendingFile=file;
  $('pbPreview').src=URL.createObjectURL(file);$('pbPreview').play().catch(()=>{});
- $('pbCaption').value='';$('pbLoc').value='';pendingSoundName='Son original';$('pbVis').value='public';
+ $('pbCaption').value=pendingTemplateCaption||'';pendingTemplateCaption='';$('pbLoc').value='';pendingSoundName='Son original';$('pbVis').value='public';
  $('pbComments').checked=true;$('pbDownload').checked=true;$('pbProgress').textContent='';
  $('publish').classList.add('on');loadTrendingHashtags()}
 $('pbBack').onclick=()=>{$('publish').classList.remove('on');pendingFile=null};
