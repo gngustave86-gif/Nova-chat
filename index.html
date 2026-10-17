@@ -402,7 +402,7 @@ auth.onAuthStateChanged(async u=>{me=u;$('splash').style.display='none';
   if(!sessionStorage.getItem('novaSessionLogged')){sessionStorage.setItem('novaSessionLogged','1');
    db.collection('users').doc(u.uid).collection('sessions').add({ua:navigator.userAgent,at:Date.now()}).catch(()=>{})}
  }
- $('auth').style.display='none';$('app').style.display='flex';await loadFeed();if(!u.isAnonymous)loadProf();refreshInboxBadge();
+ $('auth').style.display='none';$('app').style.display='flex';loadFeed();if(!u.isAnonymous)loadProf();refreshInboxBadge();
  try{const pu=new URLSearchParams(location.search).get('u');if(pu&&pu!==me.uid){const d=await db.collection('users').doc(pu).get();if(d.exists)openProfile(pu,(d.data()||{}).name||'anonyme')}}catch(e){}});
 function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('inbox').classList.toggle('on',k==4);
  $('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);$('n4').classList.toggle('on',k==4);
@@ -467,10 +467,13 @@ document.querySelectorAll('.ftab').forEach(b=>b.onclick=()=>{
  if(b.dataset.m==='friends'&&!requireAuth())return;
  document.querySelectorAll('.ftab').forEach(x=>x.classList.toggle('on',x===b));feedMode=b.dataset.m;renderFeedMode()});
 async function loadFeed(){
- const [vs,ls,fs,sv,bl]=await Promise.all([db.collection('videos').orderBy('createdAt','desc').limit(60).get(),db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get(),db.collection('blocks').where('from','==',me.uid).get()]);
- myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));myBlocked=new Set(bl.docs.map(d=>d.data().to));
+ const vs=await db.collection('videos').orderBy('createdAt','desc').limit(60).get();
  const docs=vs.docs.filter(d=>canSeeVideo({id:d.id,...d.data()}));
  rawFeedVideos=docs.map(d=>({id:d.id,...d.data()}));
+ feedPm=feedPm||{};renderFeedMode();
+ const[ls,fs,sv,bl]=await Promise.all([db.collection('likes').where('uid','==',me.uid).get(),db.collection('follows').where('from','==',me.uid).get(),db.collection('saves').where('uid','==',me.uid).get(),db.collection('blocks').where('from','==',me.uid).get()]);
+ myLikes=new Set(ls.docs.map(d=>d.data().vid));myFol=new Set(fs.docs.map(d=>d.data().to));mySaves=new Set(sv.docs.map(d=>d.data().vid));myBlocked=new Set(bl.docs.map(d=>d.data().to));
+ renderFeedMode();
  const uids=[...new Set(rawFeedVideos.map(v=>v.uid))],pm={};
  await Promise.all(uids.map(async u=>{try{const d2=await db.collection('users').doc(u).get();pm[u]=d2.data()||null}catch(e){}}));
  feedPm=pm;renderFeedMode()}
