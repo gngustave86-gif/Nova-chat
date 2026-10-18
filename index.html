@@ -208,10 +208,23 @@ nav button{position:relative}
 .brow.me{align-self:flex-end;align-items:flex-end}
 .brow.you{align-self:flex-start;align-items:flex-start}
 .brow+.brow{margin-top:7px}
-.bub{padding:9px 13px;border-radius:16px;font-size:14.5px;line-height:1.35;word-break:break-word}
+.bub{padding:9px 13px;border-radius:16px;font-size:14.5px;line-height:1.4;word-break:break-word;position:relative;font-family:'Plus Jakarta Sans',-apple-system,sans-serif}
 .bub.me{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border-bottom-right-radius:4px}
 .bub.you{background:var(--s);border-bottom-left-radius:4px}
+.bub.me::after{content:'';position:absolute;right:-6px;bottom:0;width:12px;height:14px;background:var(--b);clip-path:polygon(0 0,0 100%,100% 100%)}
+.bub.you::after{content:'';position:absolute;left:-6px;bottom:0;width:12px;height:14px;background:var(--s);clip-path:polygon(100% 0,0 100%,100% 100%)}
 .btime{font-size:10.5px;color:var(--m);margin-top:3px;padding:0 3px;display:flex;align-items:center;gap:4px}
+.tick-sent{color:rgba(255,255,255,.65)}
+.tick-delivered{color:rgba(255,255,255,.65)}
+.tick-read{color:#ff0049}
+.daysep{align-self:center;background:var(--s);color:var(--m);font-size:11.5px;padding:4px 12px;border-radius:12px;margin:10px 0 4px}
+.bquote{background:rgba(0,0,0,.18);border-left:2.5px solid rgba(255,255,255,.55);border-radius:6px;padding:4px 8px;margin-bottom:5px;font-size:12.5px;opacity:.9}
+.bub.you .bquote{border-left-color:var(--a)}
+.replybar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--s);border-top:1px solid var(--l)}
+.replybar .rbline{flex:1;border-left:2.5px solid var(--a);padding-left:8px;font-size:12.5px;color:var(--m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.replybar button{background:none;border:0;color:var(--m);font-size:16px}
+.bub.swiped{transform:translateX(-10px)}
+.bub{transition:transform .15s}
 .tinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0));align-items:center}
 .tinput input{flex:1}
 .tinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:42px;height:42px;font-size:16px;flex:0 0 42px;display:flex;align-items:center;justify-content:center}
@@ -295,6 +308,7 @@ nav button{position:relative}
 
 <div id="thread" class="ovl"><div class="thead"><button id="tback">←</button><div class="tinfo" id="tinfo"><div class="av2" id="tav" style="flex:0 0 38px;width:38px;height:38px;font-size:14px"></div><div><b id="tname"></b><div class="tstatus" id="tstatus"></div></div></div></div>
 <div id="tmsgs"></div>
+<div class="replybar" id="replybar" style="display:none"><div class="rbline" id="rbtext"></div><button id="rbclose">✕</button></div>
 <div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tmic">🎤</button><button id="tsend">➤</button></div></div>
 
 <div id="cmts"><div><div class="cmthead">Commentaires<button id="cclose">✕</button></div>
@@ -858,6 +872,7 @@ async function loadChats(){const box=$('clist');skeletonRows(box,5);
  if(clistUnsub){clistUnsub();clistUnsub=null}
  clistUnsub=db.collection('chats').where('participants','array-contains',me.uid).onSnapshot(async r=>{
   try{let docs=r.docs.map(d=>({id:d.id,...d.data()}));docs.sort((a,b)=>(b.lastAt||0)-(a.lastAt||0));
+   r.docs.forEach(d=>{const c=d.data();if(c.lastFrom&&c.lastFrom!==me.uid&&(c.lastAt||0)>(c['delivered_'+me.uid]||0)){const upd={};upd['delivered_'+me.uid]=c.lastAt;d.ref.update(upd).catch(()=>{})}});
    lastChatDocs=docs;
    if(!docs.length){lastChatProfiles={};renderChatList();return}
    const uids=[...new Set(docs.map(c=>c.participants.find(p=>p!==me.uid)))];
@@ -869,23 +884,41 @@ let curChat=null,curUnsub=null,curDocUnsub=null,curOtherUid=null,curOtherName=nu
 function fmtBubbleTime(ts){if(!ts)return'';const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
 const SEEN_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 13l5 5L15 8"/><path d="M9 13l5 5L23 8"/></svg>';
 const SENT_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>';
-function renderThread(qs,otherReadAt){
- const box=$('tmsgs');box.innerHTML='';let lastFrom=null;
+function fmtDaySep(ts){const d=new Date(ts),now=new Date();const sameDay=a=>a.getFullYear()===d.getFullYear()&&a.getMonth()===d.getMonth()&&a.getDate()===d.getDate();
+ if(sameDay(now))return'Aujourd\'hui';const y=new Date(now);y.setDate(y.getDate()-1);if(sameDay(y))return'Hier';
+ return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:d.getFullYear()!==now.getFullYear()?'numeric':undefined})}
+let replyingTo=null;
+function setReply(m){if(!m)return;replyingTo={text:m.type==='audio'?'🎤 Message vocal':(m.text||''),from:m.from};
+ $('rbtext').textContent=(m.from===me.uid?'Toi':curOtherName)+': '+replyingTo.text;$('replybar').style.display='flex';$('tin').focus()}
+$('rbclose').onclick=()=>{replyingTo=null;$('replybar').style.display='none'};
+function renderThread(qs,otherReadAt,otherDeliveredAt){
+ const box=$('tmsgs');box.innerHTML='';let lastDay=null;
  const docs=qs.docs;
  docs.forEach((d,i)=>{const m=d.data();
+  const day=new Date(m.createdAt||0).toDateString();
+  if(day!==lastDay){lastDay=day;const sep=document.createElement('div');sep.className='daysep';sep.textContent=fmtDaySep(m.createdAt);box.appendChild(sep)}
   const row=document.createElement('div');row.className='brow '+(m.from===me.uid?'me':'you');
   const b=document.createElement('div');b.className='bub '+(m.from===me.uid?'me':'you');
-  if(m.type==='audio'){b.classList.add('bubaudio');b.innerHTML='<button class="vplay">▶</button><span class="vwave">🔊🔊🔊🔊🔊</span><span class="vdur">'+(m.duration||0)+'s</span>';const aud=new Audio(m.url);const btn=b.querySelector('.vplay');btn.onclick=()=>{if(aud.paused){aud.play();btn.textContent='⏸'}else{aud.pause();btn.textContent='▶'}};aud.onended=()=>{btn.textContent='▶'}}
-  else{b.textContent=m.text}
+  if(m.replyTo){const q=document.createElement('div');q.className='bquote';q.textContent=(m.replyTo.from===me.uid?'Toi':curOtherName)+': '+m.replyTo.text;b.appendChild(q)}
+  if(m.type==='audio'){const aw=document.createElement('span');aw.className='bubaudio';aw.innerHTML='<button class="vplay">▶</button><span class="vwave">🔊🔊🔊🔊🔊</span><span class="vdur">'+(m.duration||0)+'s</span>';b.appendChild(aw);const aud=new Audio(m.url);const btn=aw.querySelector('.vplay');btn.onclick=()=>{if(aud.paused){aud.play();btn.textContent='⏸'}else{aud.pause();btn.textContent='▶'}};aud.onended=()=>{btn.textContent='▶'}}
+  else{const tx=document.createElement('span');tx.textContent=m.text;b.appendChild(tx)}
+  let touchStartX=0;
+  b.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX},{passive:true});
+  b.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchStartX;if(Math.abs(dx)>50)setReply(m)});
   row.appendChild(b);
   const isLast=i===docs.length-1,isLastMine=m.from===me.uid&&!docs.slice(i+1).some(dd=>dd.data().from===me.uid);
   const tEl=document.createElement('div');tEl.className='btime';
   let html=fmtBubbleTime(m.createdAt);
-  if(m.from===me.uid&&isLastMine){html+=' <span style="display:inline-flex">'+((otherReadAt||0)>=(m.createdAt||0)?SEEN_SVG:SENT_SVG)+'</span>'}
+  if(m.from===me.uid&&isLastMine){
+   let tickCls='tick-sent',svg=SENT_SVG;
+   if((otherReadAt||0)>=(m.createdAt||0)){tickCls='tick-read';svg=SEEN_SVG}
+   else if((otherDeliveredAt||0)>=(m.createdAt||0)){tickCls='tick-delivered';svg=SEEN_SVG}
+   html+=' <span class="'+tickCls+'" style="display:inline-flex">'+svg+'</span>'}
   tEl.innerHTML=html;row.appendChild(tEl);
   box.appendChild(row)});
  box.scrollTop=box.scrollHeight}
 async function openChat(otherUid,otherName){if(!requireAuth())return;pauseFeed();const chatId=[me.uid,otherUid].sort().join('_');curChat=chatId;curOtherUid=otherUid;curOtherName=otherName;
+ replyingTo=null;$('replybar').style.display='none';
  const ref=db.collection('chats').doc(chatId);
  $('tname').textContent='@'+otherName;$('tstatus').textContent='';$('tstatus').className='tstatus';
  $('tav').textContent=otherName[0].toUpperCase();
@@ -898,21 +931,23 @@ async function openChat(otherUid,otherName){if(!requireAuth())return;pauseFeed()
   const upd={};upd['read_'+me.uid]=Date.now();ref.update(upd).then(refreshInboxBadge).catch(()=>{});
  }catch(e){}
  if(curUnsub)curUnsub();if(curDocUnsub)curDocUnsub();
- let otherReadAt=0,typingOther=false;
- curDocUnsub=ref.onSnapshot(d=>{const c=d.data()||{};otherReadAt=c['read_'+otherUid]||0;
+ let otherReadAt=0,otherDeliveredAt=0,typingOther=false;
+ curDocUnsub=ref.onSnapshot(d=>{const c=d.data()||{};otherReadAt=c['read_'+otherUid]||0;otherDeliveredAt=c['delivered_'+otherUid]||0;
   const typingAt=c['typing_'+otherUid]||0;typingOther=(Date.now()-typingAt)<4000;
   $('tstatus').textContent=typingOther?'en train d\'écrire…':'';
   $('tstatus').className='tstatus'+(typingOther?' typing':'');
-  if(lastMsgDocs.length)renderThread({docs:lastMsgDocs},otherReadAt)});
+  if(lastMsgDocs.length)renderThread({docs:lastMsgDocs},otherReadAt,otherDeliveredAt)});
  curUnsub=ref.collection('messages').orderBy('createdAt').onSnapshot(qs=>{
-  lastMsgDocs=qs.docs;renderThread(qs,otherReadAt);
-  const upd={};upd['read_'+me.uid]=Date.now();ref.update(upd).then(refreshInboxBadge).catch(()=>{})
+  lastMsgDocs=qs.docs;renderThread(qs,otherReadAt,otherDeliveredAt);
+  const upd={};upd['read_'+me.uid]=Date.now();upd['delivered_'+me.uid]=Date.now();ref.update(upd).then(refreshInboxBadge).catch(()=>{})
  },e=>{$('tmsgs').innerHTML='<div class="empty">Erreur de chargement.</div>'})}
 $('tback').onclick=()=>{$('thread').classList.remove('on');if(curUnsub){curUnsub();curUnsub=null}if(curDocUnsub){curDocUnsub();curDocUnsub=null}curChat=null;lastMsgDocs=[];loadChats();resumeFeed()};
 async function sendMsg(){const txt=$('tin').value.trim();if(!txt||!curChat)return;$('tin').value='';
  const ref=db.collection('chats').doc(curChat);
  const upd={};upd['typing_'+me.uid]=0;ref.update(upd).catch(()=>{});
- try{await ref.collection('messages').add({from:me.uid,text:txt,createdAt:Date.now()});await ref.update({lastMsg:txt,lastAt:Date.now(),lastFrom:me.uid})}catch(e){console.error(e)}}
+ const msgData={from:me.uid,text:txt,createdAt:Date.now()};
+ if(replyingTo){msgData.replyTo=replyingTo;replyingTo=null;$('replybar').style.display='none'}
+ try{await ref.collection('messages').add(msgData);await ref.update({lastMsg:txt,lastAt:Date.now(),lastFrom:me.uid})}catch(e){console.error(e)}}
 $('tin').addEventListener('input',()=>{if(!curChat)return;const ref=db.collection('chats').doc(curChat);const upd={};upd['typing_'+me.uid]=Date.now();ref.update(upd).catch(()=>{});
  clearTimeout(typingTimer);typingTimer=setTimeout(()=>{const u2={};u2['typing_'+me.uid]=0;ref.update(u2).catch(()=>{})},3000)});
 $('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
@@ -934,9 +969,16 @@ async function startVoice(){
   await sendVoiceMsg(blob,dur)};
  voiceRecorder.start();voiceStart=Date.now();$('tmic').classList.add('rec')}
 function stopVoice(cancel){if(voiceRecorder&&voiceRecorder.state==='recording'){voiceCancel=!!cancel;voiceRecorder.stop()}}
-$('tmic').addEventListener('pointerdown',e=>{e.preventDefault();startVoice()});
-$('tmic').addEventListener('pointerup',()=>stopVoice(false));
-$('tmic').addEventListener('pointerleave',()=>stopVoice(true));
+let voiceActive=false,voiceSafety=null;
+function voicePress(e){if(e.cancelable)e.preventDefault();if(voiceActive)return;voiceActive=true;startVoice();
+ clearTimeout(voiceSafety);voiceSafety=setTimeout(()=>{if(voiceActive){voiceActive=false;stopVoice(false)}},60000)}
+function voiceRelease(cancel){if(!voiceActive)return;voiceActive=false;clearTimeout(voiceSafety);stopVoice(cancel)}
+$('tmic').addEventListener('touchstart',voicePress,{passive:false});
+$('tmic').addEventListener('touchend',e=>{if(e.cancelable)e.preventDefault();voiceRelease(false)});
+$('tmic').addEventListener('touchcancel',()=>voiceRelease(true));
+$('tmic').addEventListener('mousedown',voicePress);
+$('tmic').addEventListener('mouseup',()=>voiceRelease(false));
+$('tmic').addEventListener('mouseleave',()=>{if(voiceActive)voiceRelease(false)});
 async function sendVoiceMsg(blob,dur){
  if(!curChat)return;toast('Envoi du message vocal…');
  try{
@@ -945,7 +987,9 @@ async function sendVoiceMsg(blob,dur){
   const data=await res.json();
   if(!data.secure_url){toast('Échec de l\'envoi');return}
   const ref=db.collection('chats').doc(curChat);
-  await ref.collection('messages').add({from:me.uid,type:'audio',url:data.secure_url,duration:dur,createdAt:Date.now()});
+  const msgData={from:me.uid,type:'audio',url:data.secure_url,duration:dur,createdAt:Date.now()};
+  if(replyingTo){msgData.replyTo=replyingTo;replyingTo=null;$('replybar').style.display='none'}
+  await ref.collection('messages').add(msgData);
   await ref.update({lastMsg:'🎤 Message vocal',lastAt:Date.now(),lastFrom:me.uid})
  }catch(e){console.error(e);toast('Échec de l\'envoi')}}
 let pendingFile=null,mediaStream=null,mediaRecorder=null,recChunks=[],recTimer=null,recSeconds=0,facingMode='user',pendingSoundName='Son original',pendingTemplateCaption='',captureMode='post',myStoryUrl=null;
