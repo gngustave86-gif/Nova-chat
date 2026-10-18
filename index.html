@@ -215,6 +215,12 @@ nav button{position:relative}
 .tinput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--l);padding-bottom:calc(12px + env(safe-area-inset-bottom,0));align-items:center}
 .tinput input{flex:1}
 .tinput button{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;border-radius:50%;width:42px;height:42px;font-size:16px;flex:0 0 42px;display:flex;align-items:center;justify-content:center}
+#tmic.rec{background:#ff0049;animation:micpulse 1s infinite}
+@keyframes micpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.bubaudio{display:flex;align-items:center;gap:8px;min-width:150px}
+.bubaudio .vplay{background:rgba(255,255,255,.25);border:0;color:inherit;width:26px;height:26px;border-radius:50%;flex:0 0 26px;font-size:11px;display:flex;align-items:center;justify-content:center}
+.bubaudio .vwave{flex:1;letter-spacing:1px;opacity:.85;font-size:12px}
+.bubaudio .vdur{font-size:11px;opacity:.75}
 
 #ubody{flex:1;overflow:auto;padding:24px 20px;text-align:center}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:14px}
@@ -289,7 +295,7 @@ nav button{position:relative}
 
 <div id="thread" class="ovl"><div class="thead"><button id="tback">←</button><div class="tinfo" id="tinfo"><div class="av2" id="tav" style="flex:0 0 38px;width:38px;height:38px;font-size:14px"></div><div><b id="tname"></b><div class="tstatus" id="tstatus"></div></div></div></div>
 <div id="tmsgs"></div>
-<div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tsend">➤</button></div></div>
+<div class="tinput"><input id="tin" placeholder="Écris un message..."><button id="tmic">🎤</button><button id="tsend">➤</button></div></div>
 
 <div id="cmts"><div><div class="cmthead">Commentaires<button id="cclose">✕</button></div>
 <div id="clistc"></div>
@@ -868,7 +874,10 @@ function renderThread(qs,otherReadAt){
  const docs=qs.docs;
  docs.forEach((d,i)=>{const m=d.data();
   const row=document.createElement('div');row.className='brow '+(m.from===me.uid?'me':'you');
-  const b=document.createElement('div');b.className='bub '+(m.from===me.uid?'me':'you');b.textContent=m.text;row.appendChild(b);
+  const b=document.createElement('div');b.className='bub '+(m.from===me.uid?'me':'you');
+  if(m.type==='audio'){b.classList.add('bubaudio');b.innerHTML='<button class="vplay">▶</button><span class="vwave">🔊🔊🔊🔊🔊</span><span class="vdur">'+(m.duration||0)+'s</span>';const aud=new Audio(m.url);const btn=b.querySelector('.vplay');btn.onclick=()=>{if(aud.paused){aud.play();btn.textContent='⏸'}else{aud.pause();btn.textContent='▶'}};aud.onended=()=>{btn.textContent='▶'}}
+  else{b.textContent=m.text}
+  row.appendChild(b);
   const isLast=i===docs.length-1,isLastMine=m.from===me.uid&&!docs.slice(i+1).some(dd=>dd.data().from===me.uid);
   const tEl=document.createElement('div');tEl.className='btime';
   let html=fmtBubbleTime(m.createdAt);
@@ -908,6 +917,37 @@ $('tin').addEventListener('input',()=>{if(!curChat)return;const ref=db.collectio
  clearTimeout(typingTimer);typingTimer=setTimeout(()=>{const u2={};u2['typing_'+me.uid]=0;ref.update(u2).catch(()=>{})},3000)});
 $('tsend').onclick=sendMsg;$('tin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMsg()}});
 const CLOUD_NAME='qj5r8wt2',UPLOAD_PRESET='nova_chat_videos';
+let voiceStream=null,voiceRecorder=null,voiceChunks=[],voiceStart=0,voiceCancel=false;
+async function startVoice(){
+ if(!curChat)return;
+ try{voiceStream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast('Micro non disponible');return}
+ voiceChunks=[];voiceCancel=false;
+ const mime=MediaRecorder.isTypeSupported('audio/mp4')?'audio/mp4':(MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'');
+ voiceRecorder=mime?new MediaRecorder(voiceStream,{mimeType:mime}):new MediaRecorder(voiceStream);
+ voiceRecorder.ondataavailable=e=>{if(e.data&&e.data.size>0)voiceChunks.push(e.data)};
+ voiceRecorder.onstop=async()=>{
+  voiceStream.getTracks().forEach(t=>t.stop());$('tmic').classList.remove('rec');
+  if(voiceCancel||voiceChunks.length===0)return;
+  const dur=Math.round((Date.now()-voiceStart)/1000);
+  if(dur<1){toast('Message trop court');return}
+  const blob=new Blob(voiceChunks,{type:voiceRecorder.mimeType||'audio/webm'});
+  await sendVoiceMsg(blob,dur)};
+ voiceRecorder.start();voiceStart=Date.now();$('tmic').classList.add('rec')}
+function stopVoice(cancel){if(voiceRecorder&&voiceRecorder.state==='recording'){voiceCancel=!!cancel;voiceRecorder.stop()}}
+$('tmic').addEventListener('pointerdown',e=>{e.preventDefault();startVoice()});
+$('tmic').addEventListener('pointerup',()=>stopVoice(false));
+$('tmic').addEventListener('pointerleave',()=>stopVoice(true));
+async function sendVoiceMsg(blob,dur){
+ if(!curChat)return;toast('Envoi du message vocal…');
+ try{
+  const fd=new FormData();fd.append('file',blob,'voice.webm');fd.append('upload_preset',UPLOAD_PRESET);fd.append('resource_type','video');
+  const res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/video/upload',{method:'POST',body:fd});
+  const data=await res.json();
+  if(!data.secure_url){toast('Échec de l\'envoi');return}
+  const ref=db.collection('chats').doc(curChat);
+  await ref.collection('messages').add({from:me.uid,type:'audio',url:data.secure_url,duration:dur,createdAt:Date.now()});
+  await ref.update({lastMsg:'🎤 Message vocal',lastAt:Date.now(),lastFrom:me.uid})
+ }catch(e){console.error(e);toast('Échec de l\'envoi')}}
 let pendingFile=null,mediaStream=null,mediaRecorder=null,recChunks=[],recTimer=null,recSeconds=0,facingMode='user',pendingSoundName='Son original',pendingTemplateCaption='',captureMode='post',myStoryUrl=null;
 $('pl').onclick=()=>{if(!requireAuth())return;captureMode='post';openStudio()};
 $('pstory').onclick=()=>{if(!requireAuth())return;captureMode='story';openStudio()};
