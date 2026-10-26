@@ -14,6 +14,7 @@
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-app-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.13.1/firebase-messaging-compat.js"></script>
 <style>
 :root{--bg:#000000;--s:#121212;--t:#f4f4f6;--m:#8b8b99;--a:#9b1b30;--b:#c2273f;--l:#262626}
 :root[data-theme="light"]{--bg:#ffffff;--s:#f5f5f5;--t:#111111;--m:#5c5c66;--l:#e3e3e6}
@@ -375,6 +376,19 @@ nav button{position:relative}
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBFPBUM3cBuDCcZB7pbRi7zMTcZFhD-FMs",authDomain:"nova-chat-a2750.firebaseapp.com",projectId:"nova-chat-a2750",storageBucket:"nova-chat-a2750.firebasestorage.app",messagingSenderId:"28585583349",appId:"1:28585583349:web:59e31c47c966ecbb3e9bbc"});
 const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
+const VAPID_KEY='BPuzuwXY-Y5-nLzih46G7qcFRz97DdnfokHCGfYOEqWMl_RdMRAs1o6gsr8-v_CPa8X3KjDiaD_oZHdbqp2ZmNo';
+async function enableNotifications(){
+ try{
+  if(!('Notification'in window)||!('serviceWorker'in navigator)||!firebase.messaging)return;
+  if(Notification.permission==='denied')return;
+  const perm=Notification.permission==='granted'?'granted':await Notification.requestPermission();
+  if(perm!=='granted')return;
+  const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
+  const messaging=firebase.messaging();
+  const token=await messaging.getToken({vapidKey:VAPID_KEY,serviceWorkerRegistration:reg});
+  if(token&&me&&!me.isAnonymous){await db.collection('users').doc(me.uid).update({fcmTokens:FV.arrayUnion(token)}).catch(()=>{})}
+  messaging.onMessage(payload=>{const n=payload.notification||{};toast((n.title||'Nova Chat')+(n.body?' — '+n.body:''))})
+ }catch(e){console.log('notif setup skipped',e)}}
 try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{})}catch(e){}
 let me=null,ready=Promise.resolve(),signup=false,myLikes=new Set(),myFol=new Set(),mySaves=new Set(),viewedSet=new Set(),myBlocked=new Set();
 const ADMIN_EMAIL='gngustave86@gmail.com';
@@ -422,7 +436,7 @@ auth.onAuthStateChanged(async u=>{me=u;$('splash').style.display='none';
   if(!sessionStorage.getItem('novaSessionLogged')){sessionStorage.setItem('novaSessionLogged','1');
    db.collection('users').doc(u.uid).collection('sessions').add({ua:navigator.userAgent,at:Date.now()}).catch(()=>{})}
  }
- $('auth').style.display='none';$('app').style.display='flex';loadFeed();if(!u.isAnonymous)loadProf();refreshInboxBadge();
+ $('auth').style.display='none';$('app').style.display='flex';loadFeed();if(!u.isAnonymous){loadProf();enableNotifications()}refreshInboxBadge();
  try{const pu=new URLSearchParams(location.search).get('u');if(pu&&pu!==me.uid){const d=await db.collection('users').doc(pu).get();if(d.exists)openProfile(pu,(d.data()||{}).name||'anonyme')}}catch(e){}});
 function tab(k){$('feed').classList.toggle('on',k==1);$('chats').classList.toggle('on',k==3);$('prof').classList.toggle('on',k==2);$('inbox').classList.toggle('on',k==4);
  $('n1').classList.toggle('on',k==1);$('n3').classList.toggle('on',k==3);$('n2').classList.toggle('on',k==2);$('n4').classList.toggle('on',k==4);
